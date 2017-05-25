@@ -4,6 +4,17 @@ namespace dc\yukon;
 
 require_once('config.php');
 
+// Data structure for the options parameter when preparing SQL queires.
+interface iDatabaseConfig
+{	
+	function get_scrollable();			// Return cursor scrollable.
+	function get_sendstream();			// Return sendstream.
+	function get_timeout();				// Return timeout.
+	function set_scrollable($value);	// Set cursor scrollable.
+	function set_sendstream($value);	// Set sendstream.
+	function set_timeout($value);		// Set timeout.
+}
+
 class DatabaseConfig implements iDatabaseConfig
 {	
 	private 

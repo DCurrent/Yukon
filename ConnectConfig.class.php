@@ -4,6 +4,19 @@ namespace dc\yukon;
 
 require_once('config.php');
 
+// Structure of parameters used for database connection attempt.
+interface iConnectConfig
+{	
+	function get_host();			// Return host name.
+	function get_name();			// Return logical database name.
+	function get_user();			// Return user.
+	function get_password();		// Return password.
+	function set_host($value);		// Set host name.
+	function set_name($value);		// Set logical database name.
+	function set_user($value);		// Set user.
+	function set_password($value);	// Set password.	
+}
+
 class ConnectConfig implements iConnectConfig
 {		
 	private

@@ -4,6 +4,21 @@ namespace dc\yukon;
 
 require_once('config.php');
 
+// Data structure for line fetching parameters.
+interface iLineConfig
+{	
+	function get_class_name();			// Return class name instantiated on an object fetch.
+	function get_class_params();		// Return constructor parameter array for class instantiated on object fetch.
+	function get_fetchtype();			// Return fetch type.
+	function get_offset();				// Return row offset.
+	function get_row();					// Return row.
+	function set_class_name($value);	// Set class name instantiated on an object fetch.
+	function set_class_params(array $value); 	// Set constructor parameter array for class instantiated on object fetch.
+	function set_fetchtype($value);		// Set fetch type.
+	function set_row($value);			// Set row.
+	function set_offset($value);		// Set row offset.
+}
+
 class LineConfig implements iLineConfig 
 {
 	private 

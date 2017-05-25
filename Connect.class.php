@@ -6,6 +6,13 @@ namespace dc\yukon;
 // Damon Vaughn Caskey
 // 2014-04-04
 
+// Database connection object.
+interface iConnect 
+{	
+	function get_connection();		// Return database connection resource.
+	function open_connection();		// Attempt database connection.
+}
+
 // Database host connection manager.
 class Connect implements iConnect 
 {			

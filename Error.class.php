@@ -9,6 +9,13 @@ require_once('config.php');
 	// 5701:	Changed database context.
 	// 5703:	Changed language setting. 
 
+// Error handling.
+interface iError
+{
+	// Trap and log errors reported by database.
+	function error();	
+}
+
 class Error implements iError
 {
 	private 

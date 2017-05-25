@@ -4,6 +4,34 @@ namespace dc\yukon;
 
 require_once('config.php');
 
+// Query object. Execute SQL queries and return data.
+interface iDatabase
+{	
+	function execute();										// Execute prepared query with current parameters.
+	function get_field_count();								// Return number of fields from query result.
+	function get_field_metadata();							// Fetch and return table row's metadata array (column names, types, etc.).
+	function get_line_array();								// Fetch line array from table rows.
+	function get_line_array_all();							// Create and return a 2D array consisting of all line arrays from database query.
+	function get_line_array_list(); 						// Create and return a linked list consisting of all line arrays from database query.
+	function get_line_object();								// Fetch and return line object from table rows.
+	function get_line_object_all();							// Create and return a 2D array consisting of all line arrays from database query.
+	function get_line_object_list(); 						// Create and return a linked list consisting of all line objects from database query.
+	function get_line_params();								// Return line parameters object.
+	function get_next_result();								// Move to and return next result set.
+	function get_options();									// Return options object.
+	function get_row_count();								// Return number of records from query result.
+	function get_row_exists();								// Verify the result contains rows.
+	function get_sql();										// Return current SQl statement.
+	function get_statement();								// Return query statement data member.
+	function prepare();										// Prepare query. Returns statement reference and sends to data member.
+	function query();										// Prepare and execute query.
+	function set_connection(Connect $value);				// Set connection data member.
+	function set_sql($value);								// Set query sql string data member.
+	function set_options(DatabaseConfig $value); 			// Set the object to be used for query options settings.
+	function set_params(array $value);						// Set query sql parameters data member.
+	function set_line_params(LineConfig $value);			// Set line parameters object.
+}
+
 class Database implements iDatabase
 {
 	private 
