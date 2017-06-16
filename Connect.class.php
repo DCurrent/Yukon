@@ -2,28 +2,26 @@
 
 namespace dc\yukon;
 
-// Connect
-// Damon Vaughn Caskey
-// 2014-04-04
+require_once('config.php');
 
 // Database connection object.
 interface iConnect 
 {	
-	function get_connection();		// Return database connection resource.
-	function open_connection();		// Attempt database connection.
+	function get_connection();	// Return database connection resource.
+	function open_connection();	// Attempt database connection.
 }
 
 // Database host connection manager.
 class Connect implements iConnect 
 {			
 	private
-		$connect_m 			= NULL,	// Database connection resource.
-		$connect_params_m 	= NULL;	// Connection parameters object.
+		$connect_m 		= NULL,	// Database connection resource.
+		$connect_params_m	= NULL;	// Connection parameters object.
 			
 	public function __construct(ConnectConfig $connect = NULL)
 	{	
 		// Set connection parameters member. If no argument
-		// is provided, then created a blank connection
+		// is provided, then create a blank connection
 		// parameter instance.
 		if($connect)
 		{
@@ -70,10 +68,10 @@ class Connect implements iConnect
 		$connect_params = $this->connect_params_m;
 	
 		// Set up credential array.
-		$db_cred = array('Database' 	=> $connect_params->get_name(), 
-						'UID' 			=> $connect_params->get_user(), 
-						'PWD' 			=> $connect_params->get_password(),
-						'CharacterSet' 	=> $connect_params->get_charset());
+		$db_cred = array('Database'	=> $connect_params->get_name(), 
+				'UID' 		=> $connect_params->get_user(), 
+				'PWD' 		=> $connect_params->get_password(),
+				'CharacterSet' 	=> $connect_params->get_charset());
 									
 		// Establish database connection.
 		$connect = sqlsrv_connect($connect_params->get_host(), $db_cred);		
@@ -90,10 +88,11 @@ class Connect implements iConnect
 		return $connect;
 	}
 	
-	// Close database connection and returns TRUE, or return FALSE if connection does not exist.
+	// Close database connection and returns TRUE, or 
+	// return FALSE if connection does not exist.
 	public function close_connection()
 	{
-		$result 	= FALSE;			// Connection present and closed?
+		$result 	= FALSE;		// Connection present and closed?
 		$connect 	= $this->connect_m;	// Database connection.
 		
 		// Close DB conneciton.
