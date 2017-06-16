@@ -9,7 +9,10 @@ require_once('config.php');
 	// 5701:	Changed database context.
 	// 5703:	Changed language setting. 
 
-// Error handling.
+// Error handling. This is a very crude error 
+// trapping scheme put in place for development
+// debugging. Any errors result in a general
+// exception thrown and massive log dump.
 interface iError
 {
 	// Trap and log errors reported by database.
@@ -32,12 +35,6 @@ class Error implements iError
 	// Detect database errors, process and send to error handling.
 	public function error()
 	{		
-		/*
-		error
-		Damon Vaughn Caskey
-		2014-04-07		
-		*/
-		
 		$errors 	= NULL;		// Errors list array.
 		$error 		= array();	// Individual error output array.
 		$details	= NULL; 	// Error detail string.
@@ -54,24 +51,22 @@ class Error implements iError
 		{			
 			// Loop through error collection. 
 			foreach($errors as $error)
-			{					
-				// If requested, send a detailed report to log. PHP and MSSQL generally 
-				// do not provide useful default database errors, so this information can 
-				// be invaluable for debugging.
-				
+			{				
 				// Ignore cursor Type Change.
 				if($error['code'] != 0)
 				{
-				
+					// If requested, send a detailed report to log. PHP and MSSQL generally 
+					// do not provide useful default database errors, so this information can 
+					// be invaluable for debugging.
 					if(\dc\yukon\DEFAULTS::DETAILS === TRUE && $error['code'] != 0)
 					{			
 						// Concatenate start of detail string.
-						$details = 'Database errors:'.PHP_EOL;		
-						$details .= ' SQLSTATE: '.$error['SQLSTATE'].PHP_EOL;
-						$details .= ' Code: '.$error['code'].PHP_EOL;
-						$details .= ' Message: '.$error['message'].PHP_EOL;
-						$details .= ' Dump: '.PHP_EOL;
-						$details .= $this->var_dump_ret($this->obj_query);
+						$details = 	'Database errors:'.PHP_EOL;		
+						$details .= 	' SQLSTATE: '.$error['SQLSTATE'].PHP_EOL;
+						$details .= 	' Code: '.$error['code'].PHP_EOL;
+						$details .= 	' Message: '.$error['message'].PHP_EOL;
+						$details .= 	' Dump: '.PHP_EOL;
+						$details .= 	$this->var_dump_ret($this->obj_query);
 						
 						// Send details to log.
 						$this->error_log_send($details);
