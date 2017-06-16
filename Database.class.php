@@ -177,12 +177,6 @@ class Database implements iDatabase
 	// Return number of fields from query result.
 	public function get_field_count()
 	{
-		/*
-		field_count
-		Damon Vaughn Caskey
-		2014-04-05		
-		*/
-		
 		$count = 0;
 		
 		// Get field count.
@@ -224,13 +218,9 @@ class Database implements iDatabase
 		$fetchType	= $this->line_params_m->get_fetchtype();
 		$row		= $this->line_params_m->get_row();
 		$offset		= $this->line_params_m->get_offset();		
-		
-		// Valid statement and rows found?
-		//if($statement && $query->get_row_exists())
-		//{				
-			// Get line array.
-			$line = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
-		//}
+								
+		// Get line array.
+		$line = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
 		
 		// Error trapping.
 		$this->error_m->error();
