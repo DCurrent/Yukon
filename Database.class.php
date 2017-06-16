@@ -385,9 +385,9 @@ class Database implements iDatabase
 		// Break down options object to array.
 		if($options)
 		{
-			$options_a['Scrollable'] = $options->get_scrollable();
-			$options_a['SendStreamParamsAtExec'] = $options->get_sendstream();
-			$options_a['QueryTimeout'] = $options->get_timeout();
+			$options_a['Scrollable'] 		= $options->get_scrollable();
+			$options_a['SendStreamParamsAtExec']	= $options->get_sendstream();
+			$options_a['QueryTimeout'] 		= $options->get_timeout();
 		}
 	
 		// Prepare query		
