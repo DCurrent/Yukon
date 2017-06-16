@@ -4,12 +4,12 @@ namespace dc\yukon;
 
 require_once('config.php');
 
-// Data structure for the options parameter when preparing SQL queires.
+// Data structure for the options parameter when preparing SQL queries.
 interface iDatabaseConfig
 {	
-	function get_scrollable();			// Return cursor scrollable.
-	function get_sendstream();			// Return sendstream.
-	function get_timeout();				// Return timeout.
+	function get_scrollable();		// Return cursor scrollable.
+	function get_sendstream();		// Return sendstream.
+	function get_timeout();			// Return timeout.
 	function set_scrollable($value);	// Set cursor scrollable.
 	function set_sendstream($value);	// Set sendstream.
 	function set_timeout($value);		// Set timeout.
@@ -18,14 +18,15 @@ interface iDatabaseConfig
 class DatabaseConfig implements iDatabaseConfig
 {	
 	private 
-		$scrollable_m 	= NULL,	// Cursor type (http://msdn.microsoft.com/en-us/library/ee376927.aspx).
+		$scrollable_m 	= NULL,	// Cursor type.
 		$sendstream_m	= NULL,	// Send all stream data at execution (TRUE), or to send stream data in chunks (FALSE)
-		$timeout_m 		= NULL;	// Query timeout in seconds.
+		$timeout_m 	= NULL;	// Query timeout in seconds.
 		
 	public function __construct()
 	{
-		$this->scrollable_m = \dc\yukon\DEFAULTS::SCROLLABLE;
-		$this->sendstream_m = \dc\yukon\DEFAULTS::SENDSTREAM;
+		// Populate defaults.
+		$this->scrollable_m 	= \dc\yukon\DEFAULTS::SCROLLABLE;
+		$this->sendstream_m 	= \dc\yukon\DEFAULTS::SENDSTREAM;
 		$this->timeout_m	= \dc\yukon\DEFAULTS::TIMEOUT;
 	}
 	
