@@ -7,32 +7,35 @@ require_once('config.php');
 // Structure of parameters used for database connection attempt.
 interface iConnectConfig
 {	
-	function get_host();			// Return host name.
-	function get_name();			// Return logical database name.
-	function get_user();			// Return user.
-	function get_password();		// Return password.
-	function set_host($value);		// Set host name.
-	function set_name($value);		// Set logical database name.
-	function set_user($value);		// Set user.
+	function get_host();		// Return host name.
+	function get_name();		// Return logical database name.
+	function get_user();		// Return user.
+	function get_password();	// Return password.
+	function set_host($value);	// Set host name.
+	function set_name($value);	// Set logical database name.
+	function set_user($value);	// Set user.
 	function set_password($value);	// Set password.	
 }
 
 class ConnectConfig implements iConnectConfig
 {		
 	private
-		$host_m		= NULL,	// Server name or address.
-		$name_m		= NULL,	// Database name.
-		$user_m		= NULL,	// User name to access database.
-		$password_m	= NULL,	// Password for user to access database.
-		$charset_m	= NULL;	// Character set.
+		$charset_m			= NULL,	// Character set.
+		$exception_catch	= NULL,	// Internal exception handling toggle.
+		$host_m				= NULL,	// Server name or address.
+		$name_m				= NULL,	// Database name.
+		$user_m				= NULL,	// User name to access database.
+		$password_m			= NULL;	// Password for user to access database.
 	
 	public function __construct()
 	{
-		$this->charset_m = \dc\yukon\DEFAULTS::CHARSET;
-		$this->host_m = \dc\yukon\DEFAULTS::HOST;
-		$this->name_m = \dc\yukon\DEFAULTS::NAME;
-		$this->user_m = \dc\yukon\DEFAULTS::USER;
-		$this->password_m = \dc\yukon\DEFAULTS::PASSWORD;
+		// Populate defaults.
+		$this->exception_catch	= DEFAULTS::EXCEPTION_CATCH;
+		$this->charset_m		= DEFAULTS::CHARSET;
+		$this->host_m 			= DEFAULTS::HOST;
+		$this->name_m 			= DEFAULTS::NAME;
+		$this->user_m 			= DEFAULTS::USER;
+		$this->password_m 		= DEFAULTS::PASSWORD;
 	}
 	
 	// Accessors.
@@ -40,6 +43,11 @@ class ConnectConfig implements iConnectConfig
 	{		
 		return $this->charset_m;
 	}	
+	
+	public function get_exception_catch()
+	{
+		return $this->exception_catch;
+	}
 	
 	public function get_host()
 	{		
@@ -65,6 +73,11 @@ class ConnectConfig implements iConnectConfig
 	public function set_charset($value)
 	{		
 		$this->charset_m = $value;
+	}
+	
+	public function set_exception_catch($value)
+	{
+		$this->exception_catch = $value;
 	}
 
 	public function set_host($value)

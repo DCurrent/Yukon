@@ -8,31 +8,32 @@ require_once('config.php');
 interface iLineConfig
 {	
 	function get_class_name();			// Return class name instantiated on an object fetch.
-	function get_class_params();		// Return constructor parameter array for class instantiated on object fetch.
+	function get_class_params();			// Return constructor parameter array for class instantiated on object fetch.
 	function get_fetchtype();			// Return fetch type.
 	function get_offset();				// Return row offset.
-	function get_row();					// Return row.
-	function set_class_name($value);	// Set class name instantiated on an object fetch.
-	function set_class_params(array $value); 	// Set constructor parameter array for class instantiated on object fetch.
-	function set_fetchtype($value);		// Set fetch type.
+	function get_row();				// Return row.
+	function set_class_name($value);		// Set class name instantiated on an object fetch.
+	function set_class_params(array $value);	// Set constructor parameter array for class instantiated on object fetch.
+	function set_fetchtype($value);			// Set fetch type.
 	function set_row($value);			// Set row.
-	function set_offset($value);		// Set row offset.
+	function set_offset($value);			// Set row offset.
 }
 
 class LineConfig implements iLineConfig 
 {
 	private 
 		$fetchtype_m	= NULL,		// Line array fetch type.
-		$row_m			= NULL,		// Row to access in a result set that uses a scrollable cursor.
-		$offset_m		= NULL,		// Row to access if row is absolute or relative. 
+		$row_m		= NULL,		// Row to access in a result set that uses a scrollable cursor.
+		$offset_m	= NULL,		// Row to access if row is absolute or relative. 
 		$class_name_m	= NULL,		// Class to instantiate on an object fetch.
-		$class_params_m = array();	// Parameter array to pass into class constructor.
+		$class_params_m	= array();	// Parameter array to pass into class constructor.
 	
 	public function __construct()
 	{
-		$this->fetchtype_m = \dc\yukon\DEFAULTS::FETCHTYPE;
-		$this->row_m = \dc\yukon\DEFAULTS::ROW;
-		$this->offset_m = \dc\yukon\DEFAULTS::OFFSET;
+		// Populate defaults.
+		$this->fetchtype_m	= \dc\yukon\DEFAULTS::FETCHTYPE;
+		$this->row_m 		= \dc\yukon\DEFAULTS::ROW;
+		$this->offset_m 	= \dc\yukon\DEFAULTS::OFFSET;
 	}
 	
 	// Accessors

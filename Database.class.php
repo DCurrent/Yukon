@@ -7,29 +7,29 @@ require_once('config.php');
 // Query object. Execute SQL queries and return data.
 interface iDatabase
 {	
-	function execute();										// Execute prepared query with current parameters.
-	function get_field_count();								// Return number of fields from query result.
-	function get_field_metadata();							// Fetch and return table row's metadata array (column names, types, etc.).
-	function get_line_array();								// Fetch line array from table rows.
-	function get_line_array_all();							// Create and return a 2D array consisting of all line arrays from database query.
-	function get_line_array_list(); 						// Create and return a linked list consisting of all line arrays from database query.
-	function get_line_object();								// Fetch and return line object from table rows.
-	function get_line_object_all();							// Create and return a 2D array consisting of all line arrays from database query.
-	function get_line_object_list(); 						// Create and return a linked list consisting of all line objects from database query.
-	function get_line_params();								// Return line parameters object.
-	function get_next_result();								// Move to and return next result set.
-	function get_options();									// Return options object.
-	function get_row_count();								// Return number of records from query result.
-	function get_row_exists();								// Verify the result contains rows.
-	function get_sql();										// Return current SQl statement.
-	function get_statement();								// Return query statement data member.
-	function prepare();										// Prepare query. Returns statement reference and sends to data member.
-	function query();										// Prepare and execute query.
-	function set_connection(Connect $value);				// Set connection data member.
-	function set_sql($value);								// Set query sql string data member.
-	function set_options(DatabaseConfig $value); 			// Set the object to be used for query options settings.
-	function set_params(array $value);						// Set query sql parameters data member.
-	function set_line_params(LineConfig $value);			// Set line parameters object.
+	function execute();				// Execute prepared query with current parameters.
+	function get_field_count();			// Return number of fields from query result.
+	function get_field_metadata();			// Fetch and return table row's metadata array (column names, types, etc.).
+	function get_line_array();			// Fetch line array from table rows.
+	function get_line_array_all();			// Create and return a 2D array consisting of all line arrays from database query.
+	function get_line_array_list(); 		// Create and return a linked list consisting of all line arrays from database query.
+	function get_line_object();			// Fetch and return line object from table rows.
+	function get_line_object_all();			// Create and return a 2D array consisting of all line arrays from database query.
+	function get_line_object_list(); 		// Create and return a linked list consisting of all line objects from database query.
+	function get_line_params();			// Return line parameters object.
+	function get_next_result();			// Move to and return next result set.
+	function get_options();				// Return options object.
+	function get_row_count();			// Return number of records from query result.
+	function get_row_exists();			// Verify the result contains rows.
+	function get_sql();				// Return current SQl statement.
+	function get_statement();			// Return query statement data member.
+	function prepare();				// Prepare query. Returns statement reference and sends to data member.
+	function query();				// Prepare and execute query.
+	function set_connection(Connect $value);	// Set connection data member.
+	function set_sql($value);			// Set query sql string data member.
+	function set_options(DatabaseConfig $value);	// Set the object to be used for query options settings.
+	function set_params(array $value);		// Set query sql parameters data member.
+	function set_line_params(LineConfig $value);	// Set line parameters object.
 }
 
 class Database implements iDatabase
@@ -40,14 +40,10 @@ class Database implements iDatabase
 		$options_m		= NULL,		// Query options object.
 		$statement_m	= NULL,		// Prepared/Executed query reference.
 		$line_params_m	= NULL,		// Line get options.
-		$connect_m		= NULL,		// DB connection object.
-		$error_m		= NULL;		// Error handler.
+		$connect_m		= NULL;		// DB connection object.
 	
 	public function __construct(Connect $connect = NULL, DatabaseConfig $options = NULL, LineConfig $line_params = NULL)
 	{
-		// Initialize error handler.
-		$this->error_m = new Error($this);
-				
 		// Set up memeber objects we'll need. In most cases,
 		// if an argument is NULL, a blank object will
 		// be created and used. See individual methods
@@ -62,6 +58,11 @@ class Database implements iDatabase
 	}
 	
 	// Accessors
+	public function get_error()
+	{
+		return $this->error;	
+	}
+	
 	public function get_connection()
 	{
 		return $this->connect_m;
@@ -78,6 +79,11 @@ class Database implements iDatabase
 	}
 	
 	// Mutators	
+	public function set_error(Error $value)
+	{
+		$this->error_m = $value;
+	}
+		
 	public function set_options(DatabaseConfig $value)
 	{
 		$this->options_m = $value;
@@ -132,7 +138,7 @@ class Database implements iDatabase
 		}
 		else
 		{
-			$result = new \dc\yukon\DatabaseConfig();		
+			$result = new DatabaseConfig();		
 		}
 		
 		// Populate member with result.
@@ -177,19 +183,25 @@ class Database implements iDatabase
 	// Return number of fields from query result.
 	public function get_field_count()
 	{
-		/*
-		field_count
-		Damon Vaughn Caskey
-		2014-04-05		
-		*/
+		$error_handler 	= $this->options_m->get_error();
+		$count 			= 0;
 		
-		$count = 0;
-		
-		// Get field count.
-		$count = sqlsrv_num_fields($this->statement_m);
-		
-		// Error trapping.
-		$this->error_m->error();
+		try 
+		{
+			// Get field count.
+			$count = sqlsrv_num_fields($this->statement_m);
+			
+			// Any errors?
+			if($error_handler->detect_errors())
+			{
+				throw new \Exception(EXCEPTION_MSG::FIELD_COUNT, EXCEPTION_CODE::FIELD_COUNT);
+			}
+			
+		}
+		catch (\Exception $exception) 
+		{	
+			$error_handler->exception_catch($exception);
+		}
 		
 		// Return field count.
 		return $count;
@@ -198,19 +210,10 @@ class Database implements iDatabase
 	// Fetch and return table row's metadata array (column names, types, etc.).
 	public function get_field_metadata()
 	{
-		/*
-		db_field_metadata
-		Damon Vaughn Caskey
-		2014-04-06		
-		*/
-		
 		$meta = array();
 		
 		// Get metadata array.
 		$meta = sqlsrv_field_metadata($this->statement_m);
-		
-		// Error trapping.
-		$this->error_m->error();
 		
 		// Return metadata array.
 		return $meta;
@@ -219,12 +222,6 @@ class Database implements iDatabase
 	// Fetch line array from table rows.
 	public function get_line_array()
 	{
-		/*
-		line_array
-		Damon Vaughn Caskey
-		2014-04-06
-		*/
-		
 		$line		= FALSE;	// Database line array.
 		$statement	= NULL; 	// Query result reference.
 		$fetchType	= NULL;		// Line array fetchtype.
@@ -236,16 +233,10 @@ class Database implements iDatabase
 		$fetchType	= $this->line_params_m->get_fetchtype();
 		$row		= $this->line_params_m->get_row();
 		$offset		= $this->line_params_m->get_offset();		
-		
-		// Valid statement and rows found?
-		//if($statement && $query->get_row_exists())
-		//{				
-			// Get line array.
-			$line = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
-		//}
-		
-		// Error trapping.
-		$this->error_m->error();
+								
+		// Get line array.
+		$line = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
+
 		
 		// Return line array.
 		return $line;
@@ -254,21 +245,12 @@ class Database implements iDatabase
 	// Create and return a 2D array consisting of all line arrays from database query.
 	public function get_line_array_all()
 	{
-		/*
-		line_array_all
-		Damon Vaughn Caskey
-		2014-04-06
-		*/
-	
 		$line_array	= FALSE;	// 2D array of all line arrays.
 		$line		= NULL;		// Database line array.
 				
 		// Loop all rows from database results.
 		while($line = $this->get_line_array())
-		{	
-			// Error trapping.
-			$this->error_m->error();
-				
+		{				
 			// Add line array to 2D array of lines.
 			$line_array[] = $line;				
 		}		
@@ -277,17 +259,11 @@ class Database implements iDatabase
 		return $line_array;
 	}	
 	
-	// Create and return a linked list consisting of all line objects from database query.
+	// Create and return a linked list consisting of all line elements from database query.
 	public function get_line_array_list()
-	{
-		/*
-		line_array_list
-		Damon Vaughn Caskey
-		2015-06-15
-		*/
-		
-		$result = new SplDoublyLinkedList();		
-		$line	= NULL;		// Database line array.
+	{		
+		$result = new SplDoublyLinkedList();	// Linked list object.		
+		$line	= NULL;				// Database line array.
 		
 		// Loop all rows from database results.
 		while($line = $this->get_line_array())
@@ -303,57 +279,32 @@ class Database implements iDatabase
 	// Fetch and return line object from table rows.
 	public function get_line_object()
 	{
-		/*
-		line_object
-		Damon Vaughn Caskey
-		2014-04-06
-		*/
-		
-		$line			= NULL;		// Database line object.
-		$statement		= NULL;		// Query result reference.
-		$fetchType		= NULL;		// Line array fetchtype.
-		$row			= NULL;		// Row type.
-		$offset			= NULL;		// Row position if absolute.
-		$class_name		= NULL;		// Class name.
+		$line		= NULL;		// Database line object.
+		$statement	= NULL;		// Query result reference.
+		$fetchType	= NULL;		// Line array fetchtype.
+		$row		= NULL;		// Row type.
+		$offset		= NULL;		// Row position if absolute.
+		$class_name	= NULL;		// Class name.
 		$class_params	= array();	// Class parameter array.
 		
 		// Dereference data members.
-		$statement 		= $this->statement_m;
-		$fetchType		= $this->line_params_m->get_fetchtype();
-		$row			= $this->line_params_m->get_row();
-		$offset			= $this->line_params_m->get_offset();
-		$class			= $this->line_params_m->get_class_name();
+		$statement 	= $this->statement_m;
+		$fetchType	= $this->line_params_m->get_fetchtype();
+		$row		= $this->line_params_m->get_row();
+		$offset		= $this->line_params_m->get_offset();
+		$class		= $this->line_params_m->get_class_name();
 		$class_params	= $this->line_params_m->get_class_params();
-		
-		// Valid statement and rows exist?		
-		//if($statement !== FALSE && $this->get_row_exists())
-		//{	
-		
-										
-					
+				
 		// Get line object.
 		$line = sqlsrv_fetch_object($statement, $class, $class_params, $row, $offset);
-	
 			
-			
-					
-			// Error trapping.
-			$this->error_m->error();
-		//}
-		
 		// Return line object.
 		return $line;
 	}
 	
-	// Create and return a 2D array consisting of all line arrays from database query.
+	// Create and return an array consisting of all line objects from database query.
 	public function get_line_object_all()
 	{
-		/*
-		line_object_all
-		Damon Vaughn Caskey
-		2014-04-06
-		*/
-		
 		$line_array	= array();	// 2D array of all line objects.
 		$line		= NULL;		// Database line objects.
 		
@@ -371,23 +322,17 @@ class Database implements iDatabase
 	// Create and return a linked list consisting of all line objects from database query.
 	public function get_line_object_list()
 	{
-		/*
-		line_object_list
-		Damon Vaughn Caskey
-		2015-06-15
-		*/
-		
-		$result = new \SplDoublyLinkedList();		
-		$line	= NULL;		// Database line objects.
+		$result = new \SplDoublyLinkedList();	// Linked list object.	
+		$line	= NULL;				// Database line objects.
 		
 		// Loop all rows from database results.
 		while($line = $this->get_line_object())
 		{				
-			// Add line object to list of object.
+			// Add line object to linked list.
 			$result->push($line);
 		}
 	
-		// Return line object.
+		// Return linked list object.
 		return $result;
 	}
 	
@@ -397,9 +342,6 @@ class Database implements iDatabase
 		$result = FALSE;
 		
 		$result = sqlsrv_next_result($this->statement_m);
-	
-		// Error trapping.
-		$this->error_m->error();
 		
 		return $result;
 	
@@ -408,32 +350,16 @@ class Database implements iDatabase
 	// Execute prepared query with current parameters.
 	public function execute()
 	{
-		/*
-		db_execute
-		Damon Vaughn Caskey
-		2014-04-04
-		*/
-		
 		$result     = FALSE;	// Result of execution.
 		
 		sqlsrv_execute($this->statement_m);
-				
-		// Error trapping.
-		$this->error_m->error();
 		
 		return $result;	
 	}
 	
-	// Prepare query. Returns statement reference and sends to data member.
+	// Prepare query. Returns statement reference and updates data member.
 	public function prepare()
 	{
-		/*
-		db_prepare
-		Damon Vaughn Caskey
-		2012-11-13
-		~2014-04-03
-		*/
-	
 		$connect	= NULL;		// Database connection reference.
 		$statement	= NULL;		// Database statement reference.			
 		$sql		= NULL;		// SQL string.
@@ -442,24 +368,21 @@ class Database implements iDatabase
 		$options_a	= array();	// Query options array.
 		
 		// Dereference data members.
-		$connect = $this->connect_m->get_connection();
-		$sql = $this->sql_m;
-		$params = $this->params_m;
-		$options = $this->options_m;
+		$connect	= $this->connect_m->get_connection();
+		$sql 		= $this->sql_m;
+		$params 	= $this->params_m;
+		$options	= $this->options_m;
 	
 		// Break down options object to array.
 		if($options)
 		{
-			$options_a['Scrollable'] = $options->get_scrollable();
-			$options_a['SendStreamParamsAtExec'] = $options->get_sendstream();
-			$options_a['QueryTimeout'] = $options->get_timeout();
+			$options_a['Scrollable'] 		= $options->get_scrollable();
+			$options_a['SendStreamParamsAtExec']	= $options->get_sendstream();
+			$options_a['QueryTimeout'] 		= $options->get_timeout();
 		}
 	
 		// Prepare query		
 		$statement = sqlsrv_prepare($connect, $sql, $params, $options_a);
-		
-		// Error trapping.
-		$this->error_m->error();
 		
 		// Set DB statement data member.
 		$this->statement_m = $statement;
@@ -489,19 +412,10 @@ class Database implements iDatabase
 	// Return number of records from query result.	
 	public function get_row_count()
 	{
-		/*
-		row_count
-		Damon Vaughn Caskey
-		2014-04-06	
-		*/
-		
 		$count = 0;
 		
 		// Get row count.
 		$count = sqlsrv_num_rows($this->statement_m);	
-		
-		// Error trapping.
-		$this->error_m->error();	
 		
 		// Return count.
 		return $count;
@@ -510,19 +424,10 @@ class Database implements iDatabase
 	// Verify result set contains any rows.	
 	public function get_row_exists()
 	{
-		/*
-		row_exists
-		Damon Vaughn Caskey
-		2014-08-08	
-		*/
-		
 		$result = FALSE;
 		
 		// Get row count.
 		$result = sqlsrv_has_rows($this->statement_m);	
-		
-		// Error trapping.
-		$this->error_m->error();	
 		
 		// Return result.
 		return $result;
@@ -531,12 +436,6 @@ class Database implements iDatabase
 	// Prepare and execute query.
 	public function query()
 	{
-		/*
-		query
-		Damon Vaughn Caskey
-		2014-11-13
-		*/
-		
 		$connect	= NULL;		// Database connection reference.
 		$statement	= NULL;		// Database result reference.			
 		$sql		= NULL;		// SQL string.
@@ -545,24 +444,21 @@ class Database implements iDatabase
 		$options_a	= array();	// Query options array.
 				
 		// Dereference data members.
-		$connect = $this->connect_m->get_connection();
-		$sql = $this->sql_m;
-		$params = $this->params_m;
-		$options = $this->options_m;
+		$connect 	= $this->connect_m->get_connection();
+		$sql 		= $this->sql_m;
+		$params 	= $this->params_m;
+		$options 	= $this->options_m;
 	
 		// Break down options object to array.
 		if($options)
 		{
-			$options_a['Scrollable'] = $options->get_scrollable();
-			$options_a['SendStreamParamsAtExec'] = $options->get_sendstream();
-			$options_a['QueryTimeout'] = $options->get_timeout();
+			$options_a['Scrollable'] 		= $options->get_scrollable();
+			$options_a['SendStreamParamsAtExec']	= $options->get_sendstream();
+			$options_a['QueryTimeout'] 		= $options->get_timeout();
 		}
 	
 		// Execute query.
 		$statement = sqlsrv_query($connect, $sql, $params, $options_a);
-		
-		// Error trapping.
-		$this->error_m->error();
 		
 		// Set data member.
 		$this->statement_m = $statement;
