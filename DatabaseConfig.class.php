@@ -7,10 +7,6 @@ require_once('config.php');
 // Data structure for the options parameter when preparing SQL queries.
 interface iDatabaseConfig
 {	
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/master
 	function get_error();			// Error handling object.	
 	function get_scrollable();				// Return cursor scrollable.
 	function get_sendstream();				// Return sendstream.
@@ -19,58 +15,23 @@ interface iDatabaseConfig
 	function set_scrollable($value);		// Set cursor scrollable.
 	function set_sendstream($value);		// Set sendstream.
 	function set_timeout($value);			// Set timeout.
-<<<<<<< HEAD
-=======
-=======
-	function get_scrollable();		// Return cursor scrollable.
-	function get_sendstream();		// Return sendstream.
-	function get_timeout();			// Return timeout.
-	function set_scrollable($value);	// Set cursor scrollable.
-	function set_sendstream($value);	// Set sendstream.
-	function set_timeout($value);		// Set timeout.
->>>>>>> origin/master
->>>>>>> origin/master
 }
 
 class DatabaseConfig implements iDatabaseConfig
 {	
 	private 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/master
 		$error		= NULL,	// Exception catching flag.
 		$scrollable_m 		= NULL,	// Cursor type.
 		$sendstream_m		= NULL,	// Send all stream data at execution (TRUE), or to send stream data in chunks (FALSE)
 		$timeout_m 			= NULL;	// Query timeout in seconds.
-<<<<<<< HEAD
-=======
-=======
-		$scrollable_m 	= NULL,	// Cursor type.
-		$sendstream_m	= NULL,	// Send all stream data at execution (TRUE), or to send stream data in chunks (FALSE)
-		$timeout_m 	= NULL;	// Query timeout in seconds.
->>>>>>> origin/master
->>>>>>> origin/master
 		
 	public function __construct(Error $error = NULL)
 	{
 		// Populate defaults.
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/master
 		$this->error			= $this->construct_error($error);
 		$this->scrollable_m 	= DEFAULTS::SCROLLABLE;
 		$this->sendstream_m 	= DEFAULTS::SENDSTREAM;
 		$this->timeout_m		= DEFAULTS::TIMEOUT;
-<<<<<<< HEAD
-=======
-=======
-		$this->scrollable_m 	= \dc\yukon\DEFAULTS::SCROLLABLE;
-		$this->sendstream_m 	= \dc\yukon\DEFAULTS::SENDSTREAM;
-		$this->timeout_m	= \dc\yukon\DEFAULTS::TIMEOUT;
->>>>>>> origin/master
->>>>>>> origin/master
 	}
 	
 	// Accessors

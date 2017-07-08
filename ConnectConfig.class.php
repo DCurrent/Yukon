@@ -30,26 +30,12 @@ class ConnectConfig implements iConnectConfig
 	public function __construct()
 	{
 		// Populate defaults.
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/master
 		$this->exception_catch	= DEFAULTS::EXCEPTION_CATCH;
 		$this->charset_m		= DEFAULTS::CHARSET;
 		$this->host_m 			= DEFAULTS::HOST;
 		$this->name_m 			= DEFAULTS::NAME;
 		$this->user_m 			= DEFAULTS::USER;
 		$this->password_m 		= DEFAULTS::PASSWORD;
-<<<<<<< HEAD
-=======
-=======
-		$this->charset_m	= \dc\yukon\DEFAULTS::CHARSET;
-		$this->host_m 		= \dc\yukon\DEFAULTS::HOST;
-		$this->name_m 		= \dc\yukon\DEFAULTS::NAME;
-		$this->user_m 		= \dc\yukon\DEFAULTS::USER;
-		$this->password_m 	= \dc\yukon\DEFAULTS::PASSWORD;
->>>>>>> origin/master
->>>>>>> origin/master
 	}
 	
 	// Accessors.

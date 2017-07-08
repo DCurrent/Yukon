@@ -9,18 +9,7 @@ require_once('config.php');
 	// 5701:	Changed database context.
 	// 5703:	Changed language setting.
 
-<<<<<<< HEAD
 // Legacy error handling.
-=======
-<<<<<<< HEAD
-// Legacy error handling.
-=======
-// Error handling. This is a very crude error 
-// trapping scheme put in place for development
-// debugging. Any errors result in a general
-// exception thrown and massive log dump.
->>>>>>> origin/master
->>>>>>> origin/master
 interface iError
 {
 	// Accessors
@@ -49,10 +38,6 @@ class Error implements iError
 		return $this->config;
 	}
 	
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/master
 	// Mutators.
 	public function set_config(ErrorConfig $value)
 	{
@@ -75,18 +60,6 @@ class Error implements iError
 		{
 			$result = new ErrorConfig();		
 		}
-<<<<<<< HEAD
-=======
-=======
-	// Detect database errors, process and send to error handling.
-	public function error()
-	{		
-		$errors 	= NULL;		// Errors list array.
-		$error 		= array();	// Individual error output array.
-		$details	= NULL; 	// Error detail string.
-		$result 	= NULL;		// Final result (FALSE = No Errors, TRUE = Erros).
->>>>>>> origin/master
->>>>>>> origin/master
 		
 		// Populate member with result.
 		$this->config = $result;
@@ -97,20 +70,24 @@ class Error implements iError
 	// Detect sqlsrv errors.
 	// Return TRUE if errors found and
 	// not on the ignore list.
-	public function detect_error($type = SQLSRV_ERR_ALL)
+	public function detect_error()
 	{
-		$ignore_list	= NULL;	// Collection of errors to ignore.
+		$exempt_codes	= NULL;	// Collection of errors to ignore.
 		$errors			= NULL;	// Collection of errors.
 		$error 			= NULL;	// Element of errors - Collection of error attributes.
 		$result			= NULL;	// Final result output.
 		
+		// If error trapping is off, just exit. Let's
+		// hope the application will be handling
+		// the error instead.
+		if(!$this->config->get_exception_thow())
+		{
+			return;
+		}
+			
 		// Get any errors.
-		$this->errors = sqlsrv_errors($type);
+		$this->errors = sqlsrv_errors(SQLSRV_ERR_ALL);
 		
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/master
 		// If any errors are present, then
 		// loop errors collection - we want to make
 		// sure the error is one we care about.
@@ -121,72 +98,30 @@ class Error implements iError
 			{
 				$result = TRUE;
 				
-				$ignore_list = $this->config->get_ignore_codes();
+				$exempt_codes = $this->config->get_exempt_codes();
 
 				// Verify list object.
-				if(is_object($ignore_list))
-<<<<<<< HEAD
+				if(is_object($exempt_codes))
 				{
 					// Rewind list.
-					$ignore_list->rewind();
+					$exempt_codes->rewind();
 					
 					// Compare error code to items in ignore
 					// list until a match is found or we
 					// get to end of ignore list.
-					while ($ignore_list->valid()
+					while ($exempt_codes->valid()
 						  && $result)
-=======
-				{
-					// Rewind list.
-					$ignore_list->rewind();
-					
-					// Compare error code to items in ignore
-					// list until a match is found or we
-					// get to end of ignore list.
-					while ($ignore_list->valid()
-						  && $result)
-=======
-		// Any errors found?
-		if($errors)					
-		{			
-			// Loop through error collection. 
-			foreach($errors as $error)
-			{				
-				// Ignore cursor Type Change.
-				if($error['code'] != 0)
-				{
-					// If requested, send a detailed report to log. PHP and MSSQL generally 
-					// do not provide useful default database errors, so this information can 
-					// be invaluable for debugging.
-					if(\dc\yukon\DEFAULTS::DETAILS === TRUE && $error['code'] != 0)
-					{			
-						// Concatenate start of detail string.
-						$details = 	'Database errors:'.PHP_EOL;		
-						$details .= 	' SQLSTATE: '.$error['SQLSTATE'].PHP_EOL;
-						$details .= 	' Code: '.$error['code'].PHP_EOL;
-						$details .= 	' Message: '.$error['message'].PHP_EOL;
-						$details .= 	' Dump: '.PHP_EOL;
-						$details .= 	$this->var_dump_ret($this->obj_query);
-						
-						// Send details to log.
-						$this->error_log_send($details);
-					}
-														
-					// Catch and document the exception.								
-					try 
->>>>>>> origin/master
->>>>>>> origin/master
 					{
 						// If current ignore list item matches
 						// current error code, then mark this
 						// found false. We can ignore this
 						// error and move on to the next.
-						if($error['code'] == $ignore_list->current())
+						if($error['code'] == $exempt_codes->current())
 						{
 							$result = FALSE;
 						}
 						
-						$ignore_list->next();
+						$exempt_codes->next();
 					}
 				}
 				
