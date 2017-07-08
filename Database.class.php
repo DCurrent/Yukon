@@ -40,14 +40,15 @@ class Database implements iDatabase
 		$options_m	= NULL,		// Query options object.
 		$statement_m	= NULL,		// Prepared/Executed query reference.
 		$line_params_m	= NULL,		// Line get options.
+<<<<<<< HEAD
+		$connect_m		= NULL;		// DB connection object.
+=======
 		$connect_m	= NULL,		// DB connection object.
 		$error_m	= NULL;		// Error handler.
+>>>>>>> origin/master
 	
 	public function __construct(Connect $connect = NULL, DatabaseConfig $options = NULL, LineConfig $line_params = NULL)
 	{
-		// Initialize error handler.
-		$this->error_m = new Error($this);
-				
 		// Set up memeber objects we'll need. In most cases,
 		// if an argument is NULL, a blank object will
 		// be created and used. See individual methods
@@ -62,6 +63,11 @@ class Database implements iDatabase
 	}
 	
 	// Accessors
+	public function get_error()
+	{
+		return $this->error;	
+	}
+	
 	public function get_connection()
 	{
 		return $this->connect_m;
@@ -78,6 +84,11 @@ class Database implements iDatabase
 	}
 	
 	// Mutators	
+	public function set_error(Error $value)
+	{
+		$this->error_m = $value;
+	}
+		
 	public function set_options(DatabaseConfig $value)
 	{
 		$this->options_m = $value;
@@ -132,7 +143,7 @@ class Database implements iDatabase
 		}
 		else
 		{
-			$result = new \dc\yukon\DatabaseConfig();		
+			$result = new DatabaseConfig();		
 		}
 		
 		// Populate member with result.
@@ -177,6 +188,27 @@ class Database implements iDatabase
 	// Return number of fields from query result.
 	public function get_field_count()
 	{
+<<<<<<< HEAD
+		$error_handler 	= $this->options_m->get_error();
+		$count 			= 0;
+		
+		try 
+		{
+			// Get field count.
+			$count = sqlsrv_num_fields($this->statement_m);
+			
+			// Any errors?
+			if($error_handler->detect_errors())
+			{
+				throw new \Exception(EXCEPTION_MSG::FIELD_COUNT, EXCEPTION_CODE::FIELD_COUNT);
+			}
+			
+		}
+		catch (\Exception $exception) 
+		{	
+			$error_handler->exception_catch($exception);
+		}
+=======
 		$count = 0;
 		
 		// Get field count.
@@ -184,6 +216,7 @@ class Database implements iDatabase
 		
 		// Error trapping.
 		$this->error_m->error();
+>>>>>>> origin/master
 		
 		// Return field count.
 		return $count;
@@ -196,9 +229,6 @@ class Database implements iDatabase
 		
 		// Get metadata array.
 		$meta = sqlsrv_field_metadata($this->statement_m);
-		
-		// Error trapping.
-		$this->error_m->error();
 		
 		// Return metadata array.
 		return $meta;
@@ -221,9 +251,13 @@ class Database implements iDatabase
 								
 		// Get line array.
 		$line = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
+<<<<<<< HEAD
+
+=======
 		
 		// Error trapping.
 		$this->error_m->error();
+>>>>>>> origin/master
 		
 		// Return line array.
 		return $line;
@@ -237,10 +271,7 @@ class Database implements iDatabase
 				
 		// Loop all rows from database results.
 		while($line = $this->get_line_array())
-		{	
-			// Error trapping.
-			$this->error_m->error();
-				
+		{				
 			// Add line array to 2D array of lines.
 			$line_array[] = $line;				
 		}		
@@ -287,9 +318,12 @@ class Database implements iDatabase
 				
 		// Get line object.
 		$line = sqlsrv_fetch_object($statement, $class, $class_params, $row, $offset);
+<<<<<<< HEAD
+=======
 						
 		// Error trapping.
 		$this->error_m->error();
+>>>>>>> origin/master
 			
 		// Return line object.
 		return $line;
@@ -335,9 +369,6 @@ class Database implements iDatabase
 		$result = FALSE;
 		
 		$result = sqlsrv_next_result($this->statement_m);
-	
-		// Error trapping.
-		$this->error_m->error();
 		
 		return $result;
 	
@@ -349,9 +380,6 @@ class Database implements iDatabase
 		$result     = FALSE;	// Result of execution.
 		
 		sqlsrv_execute($this->statement_m);
-				
-		// Error trapping.
-		$this->error_m->error();
 		
 		return $result;	
 	}
@@ -382,9 +410,6 @@ class Database implements iDatabase
 	
 		// Prepare query		
 		$statement = sqlsrv_prepare($connect, $sql, $params, $options_a);
-		
-		// Error trapping.
-		$this->error_m->error();
 		
 		// Set DB statement data member.
 		$this->statement_m = $statement;
@@ -419,9 +444,6 @@ class Database implements iDatabase
 		// Get row count.
 		$count = sqlsrv_num_rows($this->statement_m);	
 		
-		// Error trapping.
-		$this->error_m->error();	
-		
 		// Return count.
 		return $count;
 	}
@@ -433,9 +455,6 @@ class Database implements iDatabase
 		
 		// Get row count.
 		$result = sqlsrv_has_rows($this->statement_m);	
-		
-		// Error trapping.
-		$this->error_m->error();	
 		
 		// Return result.
 		return $result;
@@ -467,9 +486,6 @@ class Database implements iDatabase
 	
 		// Execute query.
 		$statement = sqlsrv_query($connect, $sql, $params, $options_a);
-		
-		// Error trapping.
-		$this->error_m->error();
 		
 		// Set data member.
 		$this->statement_m = $statement;

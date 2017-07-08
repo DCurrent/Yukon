@@ -20,20 +20,30 @@ interface iConnectConfig
 class ConnectConfig implements iConnectConfig
 {		
 	private
-		$host_m		= NULL,	// Server name or address.
-		$name_m		= NULL,	// Database name.
-		$user_m		= NULL,	// User name to access database.
-		$password_m	= NULL,	// Password for user to access database.
-		$charset_m	= NULL;	// Character set.
+		$charset_m			= NULL,	// Character set.
+		$exception_catch	= NULL,	// Internal exception handling toggle.
+		$host_m				= NULL,	// Server name or address.
+		$name_m				= NULL,	// Database name.
+		$user_m				= NULL,	// User name to access database.
+		$password_m			= NULL;	// Password for user to access database.
 	
 	public function __construct()
 	{
 		// Populate defaults.
+<<<<<<< HEAD
+		$this->exception_catch	= DEFAULTS::EXCEPTION_CATCH;
+		$this->charset_m		= DEFAULTS::CHARSET;
+		$this->host_m 			= DEFAULTS::HOST;
+		$this->name_m 			= DEFAULTS::NAME;
+		$this->user_m 			= DEFAULTS::USER;
+		$this->password_m 		= DEFAULTS::PASSWORD;
+=======
 		$this->charset_m	= \dc\yukon\DEFAULTS::CHARSET;
 		$this->host_m 		= \dc\yukon\DEFAULTS::HOST;
 		$this->name_m 		= \dc\yukon\DEFAULTS::NAME;
 		$this->user_m 		= \dc\yukon\DEFAULTS::USER;
 		$this->password_m 	= \dc\yukon\DEFAULTS::PASSWORD;
+>>>>>>> origin/master
 	}
 	
 	// Accessors.
@@ -41,6 +51,11 @@ class ConnectConfig implements iConnectConfig
 	{		
 		return $this->charset_m;
 	}	
+	
+	public function get_exception_catch()
+	{
+		return $this->exception_catch;
+	}
 	
 	public function get_host()
 	{		
@@ -66,6 +81,11 @@ class ConnectConfig implements iConnectConfig
 	public function set_charset($value)
 	{		
 		$this->charset_m = $value;
+	}
+	
+	public function set_exception_catch($value)
+	{
+		$this->exception_catch = $value;
 	}
 
 	public function set_host($value)
