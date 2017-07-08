@@ -35,12 +35,21 @@ interface iDatabase
 class Database implements iDatabase
 {
 	private 
-		$sql_m			= NULL,		// SQL string.
-		$params_m 		= array(),	// SQL parameters.
-		$options_m		= NULL,		// Query options object.
+		$sql_m		= NULL,		// SQL string.
+		$params_m 	= array(),	// SQL parameters.
+		$options_m	= NULL,		// Query options object.
 		$statement_m	= NULL,		// Prepared/Executed query reference.
 		$line_params_m	= NULL,		// Line get options.
+<<<<<<< HEAD
 		$connect_m		= NULL;		// DB connection object.
+=======
+<<<<<<< HEAD
+		$connect_m		= NULL;		// DB connection object.
+=======
+		$connect_m	= NULL,		// DB connection object.
+		$error_m	= NULL;		// Error handler.
+>>>>>>> origin/master
+>>>>>>> origin/master
 	
 	public function __construct(Connect $connect = NULL, DatabaseConfig $options = NULL, LineConfig $line_params = NULL)
 	{
@@ -183,6 +192,10 @@ class Database implements iDatabase
 	// Return number of fields from query result.
 	public function get_field_count()
 	{
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> origin/master
 		$error_handler 	= $this->options_m->get_error();
 		$count 			= 0;
 		
@@ -202,6 +215,18 @@ class Database implements iDatabase
 		{	
 			$error_handler->exception_catch($exception);
 		}
+<<<<<<< HEAD
+=======
+=======
+		$count = 0;
+		
+		// Get field count.
+		$count = sqlsrv_num_fields($this->statement_m);
+		
+		// Error trapping.
+		$this->error_m->error();
+>>>>>>> origin/master
+>>>>>>> origin/master
 		
 		// Return field count.
 		return $count;
@@ -236,7 +261,17 @@ class Database implements iDatabase
 								
 		// Get line array.
 		$line = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+
+=======
+		
+		// Error trapping.
+		$this->error_m->error();
+>>>>>>> origin/master
+>>>>>>> origin/master
 		
 		// Return line array.
 		return $line;
@@ -297,6 +332,15 @@ class Database implements iDatabase
 				
 		// Get line object.
 		$line = sqlsrv_fetch_object($statement, $class, $class_params, $row, $offset);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+						
+		// Error trapping.
+		$this->error_m->error();
+>>>>>>> origin/master
+>>>>>>> origin/master
 			
 		// Return line object.
 		return $line;

@@ -7,17 +7,35 @@ require_once('config.php');
 // Database connection object.
 interface iConnect 
 {	
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> origin/master
 	function get_config();
 	function get_connection();					// Return database connection resource.
 	function set_config(ConnectConfig $value);	// Set config object.
 	function open_connection();					// Attempt database connection.
+<<<<<<< HEAD
+=======
+=======
+	function get_connection();	// Return database connection resource.
+	function open_connection();	// Attempt database connection.
+>>>>>>> origin/master
+>>>>>>> origin/master
 }
 
 // Database host connection manager.
 class Connect implements iConnect 
 {			
 	private
+<<<<<<< HEAD
 		$connect_m 			= NULL,	// Database connection resource.
+<<<<<<< HEAD
+=======
+=======
+		$connect_m 		= NULL,	// Database connection resource.
+>>>>>>> origin/master
+>>>>>>> origin/master
 		$connect_params_m	= NULL;	// Connection parameters object.
 			
 	public function __construct(ConnectConfig $connect = NULL)
@@ -84,6 +102,10 @@ class Connect implements iConnect
 		$db_cred = array('Database'	=> $connect_params->get_name(), 
 				'UID' 		=> $connect_params->get_user(), 
 				'PWD' 		=> $connect_params->get_password(),
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> origin/master
 				'CharacterSet' 	=> $connect_params->get_charset());		
 								
 		try 
@@ -112,6 +134,21 @@ class Connect implements iConnect
 				trigger_error(date(DATE_ATOM).', '.$e->getMessage(), E_USER_ERROR);
 			}
 		}
+<<<<<<< HEAD
+=======
+=======
+				'CharacterSet' 	=> $connect_params->get_charset());
+									
+		// Establish database connection.
+		$connect = sqlsrv_connect($connect_params->get_host(), $db_cred);		
+				
+		// False returned. Database connection has failed.
+		if($connect === FALSE)
+		{			
+			// Stop script and log error.					
+		}		
+>>>>>>> origin/master
+>>>>>>> origin/master
 		
 		// Set connect data
 		$this->connect_m = $connect;
