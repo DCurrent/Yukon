@@ -17,8 +17,8 @@ interface iConnect
 class Connect implements iConnect 
 {			
 	private
-		$connect_m 			= NULL,	// Database connection resource.
-		$connect_params_m	= NULL;	// Connection parameters object.
+		$connect 			= NULL,	// Database connection resource.
+		$connect_params	= NULL;	// Connection parameters object.
 			
 	public function __construct(ConnectConfig $connect = NULL)
 	{			
@@ -27,11 +27,11 @@ class Connect implements iConnect
 		// parameter instance.
 		if($connect)
 		{
-			$this->set_connection_params($connect);
+			$this->set_config($connect);
 		}
 		else
 		{
-			$this->set_connection_params(new ConnectConfig);
+			$this->set_config(new ConnectConfig);
 		}
 	
 		// Connect to database server.
@@ -47,28 +47,18 @@ class Connect implements iConnect
 	// Accessors.
 	public function get_config()
 	{
-		return $this->connect_params_m;
+		return $this->connect_params;
 	}
 	
 	public function get_connection()
 	{	
-		return $this->connect_m;
-	}
-	
-	public function get_connection_params()
-	{	
-		return $this->connect_params_m;
+		return $this->connect;
 	}
 	
 	// Mutators
-	public function set_connection_params($value)
-	{
-		$this->connect_params_m = $value;
-	}
-	
 	public function set_config(ConnectConfig $value)
 	{
-		$this->connect_params_m = $value;
+		$this->connect_params = $value;
 	}
 	
 	// Connect to database host. Returns connection.
@@ -77,44 +67,48 @@ class Connect implements iConnect
 		$connect = NULL; // Database connection reference.
 		$db_cred = NULL; // Credentials array.
 		
-		$connect_params 	= $this->connect_params_m;
-		$exception_catch	= $this->connect_params_m->get_exception_catch();
+		$config	= $this->connect_params;
+		$error	= $config->get_error();
 		
 		// Set up credential array.
-		$db_cred = array('Database'	=> $connect_params->get_name(), 
-				'UID' 		=> $connect_params->get_user(), 
-				'PWD' 		=> $connect_params->get_password(),
-				'CharacterSet' 	=> $connect_params->get_charset());		
+		$db_cred = array('Database'	=> $config->get_name(), 
+				'UID' 		=> $config->get_user(), 
+				'PWD' 		=> $config->get_password(),
+				'CharacterSet' 	=> $config->get_charset());		
 								
 		try 
 		{
 			// Can't connect if there's no host.
-			if(!$connect_params->get_host())
+			if(!$config->get_host())
 			{
-				throw new \Exception(EXCEPTION_MSG::MISSING_HOST, EXCEPTION_CODE::MISSING_HOST, $e);
+				// Detect error and throw exception if configured to do so.
+				if($error->detect_error())
+				{
+					throw new \Exception(EXCEPTIONSG::MISSING_HOST, EXCEPTION_CODE::MISSING_HOST, $e);
+				}
 			}
 			
 			// Establish database connection.
-			$connect = sqlsrv_connect($connect_params->get_host(), $db_cred);
+			$connect = sqlsrv_connect($config->get_host(), $db_cred);
 
 			// False returned. Database connection has failed.
 			if($connect === FALSE)
 			{
-				throw new \Exception(EXCEPTION_MSG::CONNECTION_FAILURE, EXCEPTION_CODE::CONNECTION_FAILURE, $e);
+				// Detect error and throw exception if configured to do so.
+				if($error->detect_error())
+				{
+					throw new \Exception(EXCEPTIONSG::CONNECTION_FAILURE, EXCEPTION_CODE::CONNECTION_FAILURE, $e);
+				}				
 			}
 		}
-		catch (\Exception $e) 
+		catch (\Exception $exception) 
 		{	
-			
-			if($exception_catch == TRUE)
-			{	
-				// Fire error event.
-				trigger_error(date(DATE_ATOM).', '.$e->getMessage(), E_USER_ERROR);
-			}
+			// Catch exception internally if configured to do so.
+			$error->exception_catch($exception);
 		}
 		
 		// Set connect data
-		$this->connect_m = $connect;
+		$this->connect = $connect;
 		
 		return $connect;
 	}
@@ -124,13 +118,13 @@ class Connect implements iConnect
 	public function close_connection()
 	{
 		$result 	= FALSE;		// Connection present and closed?
-		$connect 	= $this->connect_m;	// Database connection.
+		$connect 	= $this->connect;	// Database connection.
 		
 		// Close DB conneciton.
 		if($connect)
 		{			
 			sqlsrv_close($connect);
-			$this->connect_m = NULL;
+			$this->connect = NULL;
 			$result = TRUE;
 		}
 		

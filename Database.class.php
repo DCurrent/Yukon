@@ -192,7 +192,7 @@ class Database implements iDatabase
 			$count = sqlsrv_num_fields($this->statement_m);
 			
 			// Any errors?
-			if($error_handler->detect_errors())
+			if($error_handler->detect_error())
 			{
 				throw new \Exception(EXCEPTION_MSG::FIELD_COUNT, EXCEPTION_CODE::FIELD_COUNT);
 			}

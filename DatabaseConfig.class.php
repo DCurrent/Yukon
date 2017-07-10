@@ -76,7 +76,7 @@ class DatabaseConfig implements iDatabaseConfig
 		$this->timeout_m = $value;
 	}	
 	
-	// Sub Construcors
+	// Constructors
 	private function construct_error(Error $value = NULL)
 	{
 		$result = NULL;	// Final connection result.

@@ -27,7 +27,7 @@ abstract class DEFAULTS
 	
 	// Error and exception handling.
 	const 
-		EXEMPT_CODES	= '0, 5701, 5703',			// Error codes to igore from database driver.
+		EXEMPT_CODES	= '0, 5701, 5703',			// Error codes to ignore from database driver.
 		EXCEPTION_CATCH	= TRUE,						// TRUE = Catch exceptions internally.
 		EXCEPTION_THROW	= TRUE;						// Toggles error handling. TRUE = errors throw an exception. FALSE = errors are unhandled.
 	
@@ -40,7 +40,7 @@ abstract class DEFAULTS
 }
 
 // Codes output by thrown exceptions. Use these to take action
-// in catch blocks outside of yukon. See EXCEPTION_MSG for details
+// in catch blocks outside of Yukon. See EXCEPTION_MSG for details
 // on the meaning of each code.
 abstract class EXCEPTION_CODE
 {
