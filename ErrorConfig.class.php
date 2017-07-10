@@ -14,10 +14,10 @@ interface iErrorConfig
 {
 	function get_exception_throw();
 	function get_exception_catch();
-	function get_exempt_codes();
+	function get_exempt_driver_codes();
 	function set_exception_throw($value);
 	function set_exception_catch($value);
-	function set_exempt_codes(\SplDoublyLinkedList $value);
+	function set_exempt_driver_codes(\SplDoublyLinkedList $value);
 	
 	function driver_config($key, $value);
 }
@@ -25,14 +25,14 @@ interface iErrorConfig
 class ErrorConfig implements iErrorConfig
 {
 	private 
-		$exempt_codes		= NULL,	// List of error codes that will be ignored by error trap.
+		$exempt_driver_codes		= NULL,	// List of error codes that will be ignored by error trap.
 		$exception_catch	= NULL,	// Toggle internal exception handling.
 		$exception_throw	= NULL;	// Toggle catching of driver errors.
 	
 	
-	public function __construct($exception_catch = DEFAULTS::EXCEPTION_CATCH, $exception_throw = DEFAULTS::EXCEPTION_THROW, \SplDoublyLinkedList $exempt_codes = NULL)
+	public function __construct($exception_catch = DEFAULTS::EXCEPTION_CATCH, $exception_throw = DEFAULTS::EXCEPTION_THROW, \SplDoublyLinkedList $exempt_driver_codes = NULL)
 	{		
-		$this->construct_exempt_codes($exempt_codes);
+		$this->construct_exempt_driver_codes($exempt_driver_codes);
 	}	
 	
 	// Accessors.
@@ -46,9 +46,9 @@ class ErrorConfig implements iErrorConfig
 		return $this->exception_catch;
 	}
 	
-	public function get_exempt_codes()
+	public function get_exempt_driver_codes()
 	{
-		return $this->exempt_codes;
+		return $this->exempt_driver_codes;
 	}
 	
 	// Mutators.
@@ -62,13 +62,13 @@ class ErrorConfig implements iErrorConfig
 		$this->exception_catch = $value;
 	}
 	
-	public function set_exempt_codes(\SplDoublyLinkedList $value)
+	public function set_exempt_driver_codes(\SplDoublyLinkedList $value)
 	{
-		$this->exempt_codes = $value;
+		$this->exempt_driver_codes = $value;
 	}
 	
 	// Construcors
-	private function construct_exempt_codes(\SplDoublyLinkedList $value = NULL)
+	private function construct_exempt_driver_codes(\SplDoublyLinkedList $value = NULL)
 	{
 		$result = NULL;	// Final result.
 		
@@ -85,7 +85,7 @@ class ErrorConfig implements iErrorConfig
 			$result = new \SplDoublyLinkedList();
 			
 			// Break down list of codes to array.
-			$exmept_default = explode(',', DEFAULTS::EXEMPT_CODES);
+			$exmept_default = explode(',', DEFAULTS::EXEMPT_DRIVER_CODES);
 			
 			// Add array elements to exempt code list.
 			foreach($exmept_default as $exmept_default_element)
@@ -95,7 +95,7 @@ class ErrorConfig implements iErrorConfig
 		}
 		
 		// Populate member with result.
-		$this->exempt_codes = $result;
+		$this->exempt_driver_codes = $result;
 	
 		return $result;
 	}

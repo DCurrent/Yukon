@@ -19,6 +19,7 @@ interface iError
 	function set_config(ErrorConfig $value);
 	function detect_error();
 	function exception_catch();
+	function verify_exception_throw($exception_code);
 }
 
 class Error implements iError
@@ -58,7 +59,7 @@ class Error implements iError
 		}
 		else
 		{
-			$result = new ErrorConfig();		
+			$result = new ErrorConfig();
 		}
 		
 		// Populate member with result.
@@ -72,7 +73,7 @@ class Error implements iError
 	// not on the ignore list.
 	public function detect_error()
 	{
-		$exempt_codes	= NULL;	// Collection of errors to ignore.
+		$exempt_driver_codes	= NULL;	// Collection of errors to ignore.
 		$errors			= NULL;	// Collection of errors.
 		$error 			= NULL;	// Element of errors - Collection of error attributes.
 		$result			= NULL;	// Final result output.
@@ -80,13 +81,15 @@ class Error implements iError
 		// If error trapping is off, just exit. Let's
 		// hope the application will be handling
 		// the error instead.
-		if(!$this->config->get_exception_thow())
+		if(!$this->config->get_exception_throw())
 		{
 			return;
 		}
 			
 		// Get any errors.
 		$this->errors = sqlsrv_errors(SQLSRV_ERR_ALL);
+		
+		var_dump($this->errors);
 		
 		// If any errors are present, then
 		// loop errors collection - we want to make
@@ -98,30 +101,30 @@ class Error implements iError
 			{
 				$result = TRUE;
 				
-				$exempt_codes = $this->config->get_exempt_codes();
+				$exempt_driver_codes = $this->config->get_exempt_driver_codes();
 
 				// Verify list object.
-				if(is_object($exempt_codes))
+				if(is_object($exempt_driver_codes))
 				{
 					// Rewind list.
-					$exempt_codes->rewind();
+					$exempt_driver_codes->rewind();
 					
 					// Compare error code to items in ignore
 					// list until a match is found or we
 					// get to end of ignore list.
-					while ($exempt_codes->valid()
+					while ($exempt_driver_codes->valid()
 						  && $result)
 					{
 						// If current ignore list item matches
 						// current error code, then mark this
 						// found false. We can ignore this
 						// error and move on to the next.
-						if($error['code'] == $exempt_codes->current())
+						if($error['code'] == $exempt_driver_codes->current())
 						{
 							$result = FALSE;
 						}
 						
-						$exempt_codes->next();
+						$exempt_driver_codes->next();
 					}
 				}
 				
@@ -141,49 +144,69 @@ class Error implements iError
 		return $result;		
 	}
 	
+	// Verify we are throwing exceptions, and that
+	// the exception code we wan
+	public function verify_exception_throw($exception_code = NULL)
+	{
+		$exempt_exception_codes	= NULL;	// Collection of exceptions to ignore.
+		$result					= NULL;	// Final result output.
+		
+		$exempt_exception_codes = $this->config->get_exempt_exception_codes();
+
+		// Verify list object.
+		if(is_object($exempt_exception_codes))
+		{
+			// Rewind list.
+			$exempt_exception_codes->rewind();
+			$current = NULL;	// Current list value.
+			
+			// Compare error code to items in ignore
+			// list until a match is found or we
+			// get to end of ignore list.
+			while ($exempt_exception_codes->valid()
+				  && $result)
+			{
+				// Get current value.
+				$exempt_exception_codes->current();
+				
+				// If current ignore list item matches the
+				// exception code we are looking for, then
+				// this is an exempt exception. Also, should
+				// ANY item = ALL, then we return false 
+				// immediately regardless.
+				if($exception_code == $current
+				  || $current == EXCEPTION_CODE::ALL)
+				{
+					$result = FALSE;
+				}
+
+				$exempt_exception_codes->next();
+			}
+		}
+
+		// If we have a true result, then 
+		// there's no point doing anything
+		// else as we've found an error that
+		// is not in the ignore list.
+		if($result)
+		{
+			return $result;
+		}
+		
+		// If we made it this far, then
+		// we can return the results (false).
+		return $result;
+	}
+	
 	// Internal exception catch. Trigger an error and log the
 	// thrown exception.
 	public function exception_catch(\Exception $exception = NULL, $severity = E_ERROR)
 	{		
 		if($this->config->get_exception_catch() == TRUE)
 		{			
-			log_write($this->errors);
-			
 			throw new \ErrorException($exception->getMessage(), $exception->getCode(), $severity, $exception->getFile(), $exception->getLine());
 		}
 	}
-	
-	// Send data to log.
-	private function log_write($data, $file_name = ERROR_LOG_FILE) 
-	{
-		$result			= FALSE;	// Output result.
-		$file_handle	= NULL; 	// Target file reference.
-		
-		$file_handle = fopen($file_name, 'a+');
-		
-		// If $data is an array,
-		// break it down into
-		// human readable text.
-		if(is_array($data)) 
-		{
-			$data = print_r($data, 1);
-		}
-		
-		// Attempt to write and get result.
-		$status = fwrite($file_handle, $data);
-		
-		// Close the file.
-		fclose($file_handle);
-		
-		// Return result of write
-		// attempt.
-		if($status)
-		{
-			$result = TRUE;	
-		}
-		
-		return $status;
-	}	
 }
 
 ?>

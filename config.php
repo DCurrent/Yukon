@@ -27,9 +27,9 @@ abstract class DEFAULTS
 	
 	// Error and exception handling.
 	const 
-		EXEMPT_CODES	= '0, 5701, 5703',			// Error codes to ignore from database driver.
-		EXCEPTION_CATCH	= TRUE,						// TRUE = Catch exceptions internally.
-		EXCEPTION_THROW	= TRUE;						// Toggles error handling. TRUE = errors throw an exception. FALSE = errors are unhandled.
+		EXEMPT_DRIVER_CODES	= '0, 5701, 5703',		// Error codes to ignore from database driver.
+		EXCEPTION_CATCH		= TRUE,					// TRUE = Catch exceptions internally.
+		EXCEPTION_THROW		= TRUE;					// Toggles error handling. TRUE = errors throw an exception. FALSE = errors are unhandled.
 	
 	// New IDs. Passing these as IDs in upsert type quries ensures 
 	// the databse engine will find no matches and create 
@@ -45,6 +45,7 @@ abstract class DEFAULTS
 abstract class EXCEPTION_CODE
 {
 	const
+		ALL 				= -1,
 		CONNECTION_FAILURE	= 0,
 		FIELD_COUNT			= 1,
 		MISSING_HOST		= 2,	
