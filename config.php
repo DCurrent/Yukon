@@ -25,11 +25,13 @@ abstract class DEFAULTS
 		ROW				= SQLSRV_SCROLL_NEXT,		// Row to access in a result set that uses a scrollable cursor.
 		OFFSET			= 0;						// Row to access if row is absolute or relative. 
 	
-	// Error and exception handling.
+	// Error exemptions. These codes will be ignored
+	// by the respective layer of error trapping.
 	const 
-		EXEMPT_DRIVER_CODES	= '0, 5701, 5703',		// Error codes to ignore from database driver.
-		EXCEPTION_CATCH		= TRUE,					// TRUE = Catch exceptions internally.
-		EXCEPTION_THROW		= TRUE;					// Toggles error handling. TRUE = errors throw an exception. FALSE = errors are unhandled.
+		EXEMPT_ALL			= -1,					// If this is placed into any list, then all codes in that list will be considered exempt.
+		EXEMPT_CODES_CATCH	= '',					// Catching of thrown exceptions.
+		EXEMPT_CODES_DRIVER	= '0, 5701, 5703',		// Detection of errors from database driver.
+		EXEMPT_CODES_THROW	= '';					// Throwing exception codes.
 	
 	// New IDs. Passing these as IDs in upsert type quries ensures 
 	// the databse engine will find no matches and create 
@@ -40,16 +42,14 @@ abstract class DEFAULTS
 }
 
 // Codes output by thrown exceptions. Use these to take action
-// in catch blocks outside of Yukon. See EXCEPTION_MSG for details
-// on the meaning of each code.
+// in catch blocks outside of Yukon.
 abstract class EXCEPTION_CODE
 {
 	const
-		ALL 				= -1,
-		CONNECTION_FAILURE	= 0,
-		FIELD_COUNT			= 1,
-		MISSING_HOST		= 2,	
-		ROW_COUNT			= 3;
+		CONNECTION_FAILURE	= 0,	// Driver returned a failure response attempting to connect to database.
+		FIELD_COUNT			= 1,	// Field count returned an error code.
+		MISSING_HOST		= 2,	// No database host was provided for connection.
+		ROW_COUNT			= 3;	// Row count returned an error code.
 }
 
 // Output given by interal exception handler.

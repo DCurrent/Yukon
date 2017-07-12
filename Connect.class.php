@@ -81,12 +81,8 @@ class Connect implements iConnect
 			// Can't connect if there's no host.
 			if(!$config->get_host())
 			{
-				// Throw exception?
-				if($error->get_config()->get_exception_throw())
-				{
-					throw new \Exception(EXCEPTION_MSG::MISSING_HOST, EXCEPTION_CODE::MISSING_HOST);
-				}
-				
+				$error->exception_throw(new \Exception(EXCEPTION_MSG::MISSING_HOST, EXCEPTION_CODE::MISSING_HOST));
+								
 				die('no connection die');
 			}
 			
@@ -96,11 +92,7 @@ class Connect implements iConnect
 			// False returned. Database connection has failed.
 			if($connect === FALSE)
 			{
-				// Throw exception?
-				if($error->get_config()->get_exception_throw())
-				{
-					throw new \Exception(EXCEPTION_MSG::CONNECTION_FAILURE, EXCEPTION_CODE::CONNECTION_FAILURE);
-				}				
+				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECTION_FAILURE, EXCEPTION_CODE::CONNECTION_FAILURE));							
 			}
 		}
 		catch (\Exception $exception) 

@@ -14,19 +14,25 @@ interface iError
 {
 	// Accessors
 	function get_config();
+	function get_exception();
 	
 	// Mutators
 	function set_config(ErrorConfig $value);
+	function set_exception(\Exception $value);
+	
 	function detect_error();
 	function exception_catch();
-	function verify_exception_throw($exception_code);
+	function is_exempt(\SplDoublyLinkedList $list, $target = NULL);
+	function is_exempt_throw($target = NULL);
+	
 }
 
 class Error implements iError
 {
 	private 
 		$config = NULL,
-		$errors	= NULL;
+		$errors	= NULL,
+		$exception = NULL;
 	
 	public function __construct(ErrorConfig $config = NULL)
 	{	
@@ -44,6 +50,11 @@ class Error implements iError
 	{
 		$this->confg = $value;
 	}		
+	
+	public function set_exception(\Exception $value)
+	{
+		return $this->exception;
+	}
 	
 	// Constructors
 	private function construct_config(ErrorConfig $value = NULL)
@@ -73,7 +84,7 @@ class Error implements iError
 	// not on the ignore list.
 	public function detect_error()
 	{
-		$exempt_driver_codes	= NULL;	// Collection of errors to ignore.
+		$exempt_codes	= NULL;	// Collection of errors to ignore.
 		$errors			= NULL;	// Collection of errors.
 		$error 			= NULL;	// Element of errors - Collection of error attributes.
 		$result			= NULL;	// Final result output.
@@ -95,47 +106,19 @@ class Error implements iError
 		// loop errors collection - we want to make
 		// sure the error is one we care about.
 		if(is_array($this->errors))
-		{	
+		{			
+			$exempt_codes = $this->config->get_exempt_codes_driver();
+			
 			// Error array loop.
 			foreach($this->errors as $error)
-			{
-				$result = TRUE;
-				
-				$exempt_driver_codes = $this->config->get_exempt_driver_codes();
-
-				// Verify list object.
-				if(is_object($exempt_driver_codes))
+			{				
+				// If this error code is not exempt then we
+				// set result TRUE and exit the loop.
+				if(!$this->is_exempt($exempt_codes, $error['code']))
 				{
-					// Rewind list.
-					$exempt_driver_codes->rewind();
-					
-					// Compare error code to items in ignore
-					// list until a match is found or we
-					// get to end of ignore list.
-					while ($exempt_driver_codes->valid()
-						  && $result)
-					{
-						// If current ignore list item matches
-						// current error code, then mark this
-						// found false. We can ignore this
-						// error and move on to the next.
-						if($error['code'] == $exempt_driver_codes->current())
-						{
-							$result = FALSE;
-						}
-						
-						$exempt_driver_codes->next();
-					}
-				}
-				
-				// If we have a true result, then 
-				// there's no point doing anything
-				// else as we've found an error that
-				// is not in the ignore list.
-				if($result)
-				{
-					return $result;
-				}
+					$result = TRUE;
+					break;
+				}				
 			}		
 		}		
 		
@@ -144,50 +127,50 @@ class Error implements iError
 		return $result;		
 	}
 	
-	// Verify we are throwing exceptions, and that
-	// the exception code we wan
-	public function verify_exception_throw($exception_code = NULL)
+	// Verify passed code is not
+	// on a list of exemptions. Return TRUE
+	// if target value is in list or the list
+	// contains an exmeption all value.
+	//
+	// @list: 	Required doubly linked list of exemptions to search.
+	// @target:	Target value to search for.
+	public function is_exempt(\SplDoublyLinkedList $list, $target = NULL)
 	{
-		$exempt_exception_codes	= NULL;	// Collection of exceptions to ignore.
 		$result					= NULL;	// Final result output.
-		
-		$exempt_exception_codes = $this->config->get_exempt_exception_codes();
 
 		// Verify list object.
-		if(is_object($exempt_exception_codes))
+		if(is_object($list))
 		{
 			// Rewind list.
-			$exempt_exception_codes->rewind();
-			$current = NULL;	// Current list value.
+			$list->rewind();
+			$current 	= NULL;				// Current list value.			
 			
 			// Compare error code to items in ignore
 			// list until a match is found or we
 			// get to end of ignore list.
-			while ($exempt_exception_codes->valid()
-				  && $result)
+			while ($list->valid()
+				  && !$result)
 			{
-				// Get current value.
-				$exempt_exception_codes->current();
+				// Get current value and status.
+				$current 	= $list->current();
 				
 				// If current ignore list item matches the
-				// exception code we are looking for, then
-				// this is an exempt exception. Also, should
-				// ANY item = ALL, then we return false 
-				// immediately regardless.
-				if($exception_code == $current
-				  || $current == EXCEPTION_CODE::ALL)
+				// target we are looking for or there
+				// is an exempt all item in the list
+				// we can return true.
+				if($current == $target || $current == DEFAULTS::EXEMPT_ALL)
 				{
-					$result = FALSE;
+					$result = TRUE;
 				}
 
-				$exempt_exception_codes->next();
+				$list->next();
 			}
 		}
 
 		// If we have a true result, then 
 		// there's no point doing anything
 		// else as we've found an error that
-		// is not in the ignore list.
+		// is not exempt.
 		if($result)
 		{
 			return $result;
@@ -200,11 +183,35 @@ class Error implements iError
 	
 	// Internal exception catch. Trigger an error and log the
 	// thrown exception.
-	public function exception_catch(\Exception $exception = NULL, $severity = E_ERROR)
-	{		
-		if($this->config->get_exception_catch() == TRUE)
-		{			
+	public function exception_catch($severity = E_ERROR)
+	{	
+		$exception = $this->exception;
+		
+		// If this code is not on the exempt
+		// list for local catching, then 
+		// throw an error exception. This is our last
+		// chance to catch the error before PHP engine
+		// picks it up and more often than not throws 
+		// a relativity useless error code.
+		if(!$this->is_exempt($this->config->get_exempt_codes_catch(), $exception->getCode()))
+		{
 			throw new \ErrorException($exception->getMessage(), $exception->getCode(), $severity, $exception->getFile(), $exception->getLine());
+		}
+			
+	}
+	
+	// Throw an exception if the code is
+	// not exempt.
+	public function exception_throw(\Exception $exception = NULL)
+	{
+		if(is_object($exception))
+		{
+			$this->exception = $exception;
+		}
+		
+		if(!$this->is_exempt($this->config->get_exempt_codes_throw(), $this->exception->getCode()))
+		{
+			throw $this->exception;
 		}
 	}
 }
