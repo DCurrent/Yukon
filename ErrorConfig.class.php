@@ -113,7 +113,15 @@ class ErrorConfig implements iErrorConfig
 		// Add array elements to exempt code list.
 		foreach($value_array as $value_element)
 		{
-			$result->push($value_element);
+			// For our purposes, 0 is a valid list value, 
+			// but a blank string is not. We'll make sure
+			// the list is clean here by filtering
+			// out blank strings.
+			if($value_element !== '')
+			{
+				$result->push($value_element);	
+			}
+			
 		}
 			
 		return $result;

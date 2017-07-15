@@ -81,24 +81,23 @@ class Connect implements iConnect
 			// Can't connect if there's no host.
 			if(!$config->get_host())
 			{
-				$error->exception_throw(new \Exception(EXCEPTION_MSG::MISSING_HOST, EXCEPTION_CODE::MISSING_HOST));
-								
-				die('no connection die');
+				//$error->exception_throw(new \Exception(EXCEPTION_MSG::MISSING_HOST, EXCEPTION_CODE::MISSING_HOST));				
 			}
 			
 			// Establish database connection.
 			$connect = sqlsrv_connect($config->get_host(), $db_cred);
 
 			// False returned. Database connection has failed.
-			if($connect === FALSE)
-			{
-				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECTION_FAILURE, EXCEPTION_CODE::CONNECTION_FAILURE));							
+			if(!$connect)
+			{				
+				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECTION_FAILURE, EXCEPTION_CODE::CONNECTION_FAILURE));
 			}
+			
 		}
 		catch (\Exception $exception) 
 		{	
 			// Catch exception internally if configured to do so.
-			$error->exception_catch($exception);
+			$error->exception_catch();
 		}
 		
 		// Set connect data

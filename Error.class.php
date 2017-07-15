@@ -4,12 +4,7 @@ namespace dc\yukon;
 
 require_once('config.php');
 
-// Common warning codes:
-	// 0:		Cursor type changed.
-	// 5701:	Changed database context.
-	// 5703:	Changed language setting.
-
-// Legacy error handling.
+// Error handling object.
 interface iError
 {
 	// Accessors
@@ -20,11 +15,9 @@ interface iError
 	function set_config(ErrorConfig $value);
 	function set_exception(\Exception $value);
 	
+	// Core
 	function detect_error();
 	function exception_catch();
-	function is_exempt(\SplDoublyLinkedList $list, $target = NULL);
-	function is_exempt_throw($target = NULL);
-	
 }
 
 class Error implements iError
@@ -43,6 +36,11 @@ class Error implements iError
 	public function get_config()
 	{
 		return $this->config;
+	}
+	
+	public function get_exception()
+	{
+		return $this->exception;
 	}
 	
 	// Mutators.
@@ -97,24 +95,27 @@ class Error implements iError
 			return;
 		}
 			
-		// Get any errors.
+		// Get any errors. sqlsrv driver returns
+		// errors as a 2D array. Each error is an
+		// element comprised of an array of error
+		// attributes.
 		$this->errors = sqlsrv_errors(SQLSRV_ERR_ALL);
-		
-		var_dump($this->errors);
 		
 		// If any errors are present, then
 		// loop errors collection - we want to make
 		// sure the error is one we care about.
 		if(is_array($this->errors))
 		{			
-			$exempt_codes = $this->config->get_exempt_codes_driver();
+			$exempt_codes = $this->config->get_exempt_codes_driver();			 
 			
 			// Error array loop.
 			foreach($this->errors as $error)
 			{				
 				// If this error code is not exempt then we
 				// set result TRUE and exit the loop.
-				if(!$this->is_exempt($exempt_codes, $error['code']))
+				$is_exempt = $this->is_exempt($exempt_codes, $error['code']);
+					
+				if(!$is_exempt)
 				{
 					$result = TRUE;
 					break;
@@ -134,7 +135,7 @@ class Error implements iError
 	//
 	// @list: 	Required doubly linked list of exemptions to search.
 	// @target:	Target value to search for.
-	public function is_exempt(\SplDoublyLinkedList $list, $target = NULL)
+	protected function is_exempt(\SplDoublyLinkedList $list, $target = NULL)
 	{
 		$result					= NULL;	// Final result output.
 
@@ -148,8 +149,7 @@ class Error implements iError
 			// Compare error code to items in ignore
 			// list until a match is found or we
 			// get to end of ignore list.
-			while ($list->valid()
-				  && !$result)
+			while ($list->valid() && !$result)
 			{
 				// Get current value and status.
 				$current 	= $list->current();
@@ -166,18 +166,8 @@ class Error implements iError
 				$list->next();
 			}
 		}
-
-		// If we have a true result, then 
-		// there's no point doing anything
-		// else as we've found an error that
-		// is not exempt.
-		if($result)
-		{
-			return $result;
-		}
 		
-		// If we made it this far, then
-		// we can return the results (false).
+		// Return result.
 		return $result;
 	}
 	
@@ -185,34 +175,48 @@ class Error implements iError
 	// thrown exception.
 	public function exception_catch($severity = E_ERROR)
 	{	
-		$exception = $this->exception;
-		
+		$exception 		= $this->exception;
+		$exempt_list	= $this->config->get_exempt_codes_catch();
+		$code 			= $exception->getCode();
+			
 		// If this code is not on the exempt
 		// list for local catching, then 
 		// throw an error exception. This is our last
 		// chance to catch the error before PHP engine
 		// picks it up and more often than not throws 
 		// a relativity useless error code.
-		if(!$this->is_exempt($this->config->get_exempt_codes_catch(), $exception->getCode()))
+		$is_exempt = $this->is_exempt($exempt_list, $code);
+		
+		if(!$is_exempt)
 		{
-			throw new \ErrorException($exception->getMessage(), $exception->getCode(), $severity, $exception->getFile(), $exception->getLine());
-		}
-			
+			throw new \ErrorException($exception->getMessage(), $code, $severity, $exception->getFile(), $exception->getLine());		
+		}	
 	}
 	
 	// Throw an exception if the code is
 	// not exempt.
-	public function exception_throw(\Exception $exception = NULL)
+	public function exception_throw(\Exception $exception_arg = NULL)
 	{
-		if(is_object($exception))
+		// Use new exception object if
+		// passed as an argument.
+		if(is_object($exception_arg))
 		{
-			$this->exception = $exception;
+			$this->exception = $exception_arg;
 		}
 		
-		if(!$this->is_exempt($this->config->get_exempt_codes_throw(), $this->exception->getCode()))
+		$exception 		= $this->exception;
+		$exempt_codes	= $this->config->get_exempt_codes_throw();
+		$code			= $exception->getCode();
+		
+		// Verify code's exempt status.
+		$is_exempt = $this->is_exempt($exempt_codes, $code);
+		
+		if(!$is_exempt)
 		{
-			throw $this->exception;
+			throw $exception;
 		}
+		
+		return $exception;
 	}
 }
 
