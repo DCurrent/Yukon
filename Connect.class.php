@@ -81,7 +81,7 @@ class Connect implements iConnect
 			// Can't connect if there's no host.
 			if(!$config->get_host())
 			{
-				//$error->exception_throw(new \Exception(EXCEPTION_MSG::MISSING_HOST, EXCEPTION_CODE::MISSING_HOST));				
+				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECT_OPEN_HOST, EXCEPTION_CODE::CONNECT_OPEN_HOST));				
 			}
 			
 			// Establish database connection.
@@ -90,7 +90,7 @@ class Connect implements iConnect
 			// False returned. Database connection has failed.
 			if(!$connect)
 			{				
-				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECTION_FAILURE, EXCEPTION_CODE::CONNECTION_FAILURE));
+				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECT_OPEN_FAIL, EXCEPTION_CODE::CONNECT_OPEN_FAIL));
 			}
 			
 		}
@@ -110,17 +110,38 @@ class Connect implements iConnect
 	// return FALSE if connection does not exist.
 	public function close_connection()
 	{
-		$result 	= FALSE;		// Connection present and closed?
+		$result 	= FALSE;			// Connection present and closed?
 		$connect 	= $this->connect;	// Database connection.
 		
-		// Close DB conneciton.
-		if($connect)
-		{			
-			sqlsrv_close($connect);
-			$this->connect = NULL;
-			$result = TRUE;
+		try 
+		{
+			// Can't close if there is no connection.
+			if(!$connect)
+			{
+				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECT_CLOSE_CONNECTION, EXCEPTION_CODE::CONNECT_CLOSE_CONNECTION));				
+			}
+			
+			// Close database connection.
+			$result = sqlsrv_close($connect);
+
+			// Verify we were able to disconnect, else throw exception.
+			if($result)
+			{	
+				// Clean connection member.
+				$this->connect = NULL;
+			}
+			else
+			{
+				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECT_OPEN_FAIL, EXCEPTION_CODE::CONNECT_OPEN_FAIL));
+			}
+			
 		}
-		
+		catch (\Exception $exception) 
+		{	
+			// Catch exception internally if configured to do so.
+			$error->exception_catch();
+		}
+				
 		return $result;
 	}
 }

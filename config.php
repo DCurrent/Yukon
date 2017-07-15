@@ -46,20 +46,24 @@ abstract class DEFAULTS
 abstract class EXCEPTION_CODE
 {
 	const
-		CONNECTION_FAILURE	= 0,	// Driver returned a failure response attempting to connect to database.
-		FIELD_COUNT			= 1,	// Field count returned an error code.
-		MISSING_HOST		= 2,	// No database host was provided for connection.
-		ROW_COUNT			= 3;	// Row count returned an error code.
+		CONNECT_CLOSE_FAIL			= 0,	// Driver returned a failure response attemption to close database connection.
+		CONNECT_CLOSE_CONNECTION	= 1,	// There is no connection to close.
+		CONNECT_OPEN_FAIL			= 2,	// Driver returned a failure response attempting to connect to database.
+		CONNECT_OPEN_HOST			= 3, 	// Application did not provide a host target to connect.
+		FIELD_COUNT_ERROR			= 4,	// Field count returned an error code.
+		ROW_COUNT_ERROR				= 5;	// Row count returned an error code.
 }
 
 // Output given by interal exception handler.
 abstract class EXCEPTION_MSG
 {
-	const
-		CONNECTION_FAILURE	= 'Could not connect to database host.',
-		FIELD_COUNT			= 'Field count error.',
-		MISSING_HOST		= 'Missing or invalid database host argument.',
-		ROW_COUNT			= 'Row count error.';
+	const		
+		CONNECT_CLOSE_FAIL			= 'Could not close connection to database host.',
+		CONNECT_CLOSE_CONNECTION	= 'No database connection available to close',
+		CONNECT_OPEN_FAIL			= 'Could not connect to database host.',
+		CONNECT_OPEN_HOST			= 'Missing or invalid database host argument.',
+		FIELD_COUNT_ERROR			= 'Field count error.',
+		ROW_COUNT_ERROR				= 'Row count error.';
 }
 
 ?>

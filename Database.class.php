@@ -194,7 +194,7 @@ class Database implements iDatabase
 			// Any errors?
 			if($error_handler->detect_error())
 			{
-				throw new \Exception(EXCEPTION_MSG::FIELD_COUNT, EXCEPTION_CODE::FIELD_COUNT);
+				throw new \Exception(EXCEPTION_MSG::FIELD_COUNT_ERROR, EXCEPTION_CODE::FIELD_COUNT_ERROR);
 			}
 			
 		}
