@@ -132,7 +132,7 @@ class Connect implements iConnect
 			}
 			else
 			{
-				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECT_OPEN_FAIL, EXCEPTION_CODE::CONNECT_OPEN_FAIL));
+				$error->exception_throw(new \Exception(EXCEPTION_MSG::CONNECT_CLOSE_FAIL, EXCEPTION_CODE::CONNECT_CLOSE_FAIL));
 			}
 			
 		}
