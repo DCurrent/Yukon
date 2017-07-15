@@ -46,12 +46,16 @@ abstract class DEFAULTS
 abstract class EXCEPTION_CODE
 {
 	const
-		CONNECT_CLOSE_FAIL			= 0,	// Driver returned a failure response attemption to close database connection.
+		CONNECT_CLOSE_FAIL			= 0,	// Driver returned failure response attempting to close database connection.
 		CONNECT_CLOSE_CONNECTION	= 1,	// There is no connection to close.
-		CONNECT_OPEN_FAIL			= 2,	// Driver returned a failure response attempting to connect to database.
+		CONNECT_OPEN_FAIL			= 2,	// Driver returned failure response attempting to connect to database.
 		CONNECT_OPEN_HOST			= 3, 	// Application did not provide a host target to connect.
 		FIELD_COUNT_ERROR			= 4,	// Field count returned an error code.
-		ROW_COUNT_ERROR				= 5;	// Row count returned an error code.
+		FIELD_COUNT_STATEMENT		= 5,	// Missing or invalid query statement getting field count.
+		METADATA_ERROR				= 6,	// Metadata returned an error code.
+		METADATA_STATEMENT			= 7,	// Missing or invalid query statement getting metadata.
+		ROW_COUNT_ERROR				= 8,	// Row count returned an error code.
+		ROW_COUNT_STATEMENT			= 9;	// Missing or invalid query statement getting row count.
 }
 
 // Output given by interal exception handler.
@@ -63,7 +67,11 @@ abstract class EXCEPTION_MSG
 		CONNECT_OPEN_FAIL			= 'Could not connect to database host.',
 		CONNECT_OPEN_HOST			= 'Missing or invalid database host argument.',
 		FIELD_COUNT_ERROR			= 'Field count error.',
-		ROW_COUNT_ERROR				= 'Row count error.';
+		FIELD_COUNT_STATEMENT		= 'Field count error.',
+		METADATA_ERROR				= 'Metadata retrieval error.',
+		METADATA_STATEMENT			= 'Missing or invalid statement while attempting to retrieve metadata.',
+		ROW_COUNT_ERROR				= 'Row count error.',
+		ROW_COUNT_STATEMENT			= 'Missing or invalid statement while attempting to retrieve row count.';
 }
 
 ?>
