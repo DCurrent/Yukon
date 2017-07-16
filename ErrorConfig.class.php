@@ -38,7 +38,7 @@ class ErrorConfig implements iErrorConfig
 		// Apply exempt code lists. We use default constants here
 		// instead of in the argument block explicitly so 
 		// users must create linked lists and maintain consistency.
-		$this->exempt_codes_catch 	= $this->construct_exempt_codes($exempt_codes_catch, DEFAULTS::EXEMPT_CODES_CATCH);
+		$this->exempt_codes_catch 	= $this->construct_exempt_codes($exempt_codes_catch, DEFAULTS::EXEMPT_CODES_CATCH);		
 		$this->exempt_codes_driver	= $this->construct_exempt_codes($exempt_codes_driver, DEFAULTS::EXEMPT_CODES_DRIVER);
 		$this->exempt_codes_throw	= $this->construct_exempt_codes($exempt_codes_throw, DEFAULTS::EXEMPT_CODES_THROW);
 	}	
@@ -75,7 +75,7 @@ class ErrorConfig implements iErrorConfig
 		$this->exempt_codes_throw = $value;
 	}
 	
-	// Construcors
+	// Constructors
 											
 	// Passes through list object or returns
 	// a new object with default values if 
@@ -120,8 +120,7 @@ class ErrorConfig implements iErrorConfig
 			if($value_element !== '')
 			{
 				$result->push($value_element);	
-			}
-			
+			}			
 		}
 			
 		return $result;

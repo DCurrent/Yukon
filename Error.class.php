@@ -29,7 +29,7 @@ class Error implements iError
 	
 	public function __construct(ErrorConfig $config = NULL)
 	{	
-		$this->construct_config($config);
+		$this->config = $this->construct_config($config);
 	}
 	
 	// Accessors.
@@ -46,7 +46,7 @@ class Error implements iError
 	// Mutators.
 	public function set_config(ErrorConfig $value)
 	{
-		$this->confg = $value;
+		$this->config = $value;
 	}		
 	
 	public function set_exception(Exception $value)
@@ -70,9 +70,6 @@ class Error implements iError
 		{
 			$result = new ErrorConfig();
 		}
-		
-		// Populate member with result.
-		$this->config = $result;
 	
 		return $result;		
 	}
@@ -141,11 +138,11 @@ class Error implements iError
 
 		// Verify list object.
 		if(is_object($list))
-		{
+		{				
 			// Rewind list.
 			$list->rewind();
 			$current 	= NULL;				// Current list value.			
-			
+						
 			// Compare error code to items in ignore
 			// list until a match is found or we
 			// get to end of ignore list.
@@ -178,19 +175,25 @@ class Error implements iError
 		$exception 		= $this->exception;
 		$exempt_list	= $this->config->get_exempt_codes_catch();
 		$code 			= $exception->getCode();
-			
+		
 		// If this code is not on the exempt
 		// list for local catching, then 
-		// throw an error exception. This is our last
-		// chance to catch the error before PHP engine
-		// picks it up and more often than not throws 
-		// a relativity useless error code.
+		// throw an error ourselves. This is our last
+		// chance to catch our issue before it passes
+		// through to PHP engine.
 		$is_exempt = $this->is_exempt($exempt_list, $code);
 		
 		if(!$is_exempt)
 		{
-			throw new ErrorException($exception->getMessage(), $code, $severity, $exception->getFile(), $exception->getLine());		
-		}	
+			trigger_error('Yukon exception: '.$this->exception->getCode().' - '.$this->exception->getMessage(), E_USER_ERROR);
+		}
+		else
+		{
+			// Not exempt. We already caught this exception
+			// internally, so we'll need to re-throw
+			// for the application's catch block. 
+			throw $this->exception;
+		}
 	}
 	
 	// Throw an exception if the code is
@@ -200,11 +203,12 @@ class Error implements iError
 		// Use new exception object if
 		// passed as an argument.
 		if(is_object($exception_arg))
-		{
-			$this->exception = $exception_arg;
+		{			
+			$this->exception = $exception_arg;			
 		}
 		
 		$exception 		= $this->exception;
+		
 		$exempt_codes	= $this->config->get_exempt_codes_throw();
 		$code			= $exception->getCode();
 		

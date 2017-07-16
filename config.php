@@ -29,7 +29,7 @@ abstract class DEFAULTS
 	// by the respective layer of error trapping.
 	const 
 		EXEMPT_ALL			= -1,					// If this is placed into any list, then all codes in that list will be considered exempt.
-		EXEMPT_CODES_CATCH	= '',					// Catching of thrown exceptions.
+		EXEMPT_CODES_CATCH	= '-1',					// Catching of thrown exceptions.
 		EXEMPT_CODES_DRIVER	= '0, 5701, 5703',		// Detection of errors from database driver.
 		EXEMPT_CODES_THROW	= '';					// Throwing exception codes.
 	
