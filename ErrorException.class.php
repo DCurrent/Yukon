@@ -7,11 +7,11 @@ require_once('config.php');
 // Error exception object. Just in case
 // we'd like to add functionality
 // to PHP exception class later.
-interface iErrorExceptionDC
+interface iErrorException
 {
 }
 
-class ErrorExceptionDC extends \ErrorException implements iErrorExceptionDC
+class ErrorException extends \ErrorException implements iErrorException
 {
 }
 

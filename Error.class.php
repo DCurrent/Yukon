@@ -13,7 +13,7 @@ interface iError
 	
 	// Mutators
 	function set_config(ErrorConfig $value);
-	function set_exception(ExceptionDC $value);
+	function set_exception(Exception $value);
 	
 	// Core
 	function detect_error();
@@ -49,7 +49,7 @@ class Error implements iError
 		$this->confg = $value;
 	}		
 	
-	public function set_exception(ExceptionDC $value)
+	public function set_exception(Exception $value)
 	{
 		return $this->exception;
 	}
@@ -189,13 +189,13 @@ class Error implements iError
 		
 		if(!$is_exempt)
 		{
-			throw new ErrorExceptionDC($exception->getMessage(), $code, $severity, $exception->getFile(), $exception->getLine());		
+			throw new ErrorException($exception->getMessage(), $code, $severity, $exception->getFile(), $exception->getLine());		
 		}	
 	}
 	
 	// Throw an exception if the code is
 	// not exempt.
-	public function exception_throw(ExceptionDC $exception_arg = NULL)
+	public function exception_throw(Exception $exception_arg = NULL)
 	{
 		// Use new exception object if
 		// passed as an argument.

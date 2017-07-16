@@ -81,7 +81,7 @@ class Connect implements iConnect
 			// Can't connect if there's no host.
 			if(!$config->get_host())
 			{
-				$error->exception_throw(new ExceptionDC(EXCEPTION_MSG::CONNECT_OPEN_HOST, EXCEPTION_CODE::CONNECT_OPEN_HOST));				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::CONNECT_OPEN_HOST, EXCEPTION_CODE::CONNECT_OPEN_HOST));				
 			}
 			
 			// Establish database connection.
@@ -90,11 +90,11 @@ class Connect implements iConnect
 			// False returned. Database connection has failed.
 			if(!$connect)
 			{				
-				$error->exception_throw(new ExceptionDC(EXCEPTION_MSG::CONNECT_OPEN_FAIL, EXCEPTION_CODE::CONNECT_OPEN_FAIL));
+				$error->exception_throw(new Exception(EXCEPTION_MSG::CONNECT_OPEN_FAIL, EXCEPTION_CODE::CONNECT_OPEN_FAIL));
 			}
 			
 		}
-		catch (ExceptionDC $exception) 
+		catch (Exception $exception) 
 		{	
 			// Catch exception internally if configured to do so.
 			$error->exception_catch();
@@ -118,7 +118,7 @@ class Connect implements iConnect
 			// Can't close if there is no connection.
 			if(!$connect)
 			{
-				$error->exception_throw(new ExceptionDC(EXCEPTION_MSG::CONNECT_CLOSE_CONNECTION, EXCEPTION_CODE::CONNECT_CLOSE_CONNECTION));				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::CONNECT_CLOSE_CONNECTION, EXCEPTION_CODE::CONNECT_CLOSE_CONNECTION));				
 			}
 			
 			// Close database connection.
@@ -132,11 +132,11 @@ class Connect implements iConnect
 			}
 			else
 			{
-				$error->exception_throw(new ExceptionDC(EXCEPTION_MSG::CONNECT_CLOSE_FAIL, EXCEPTION_CODE::CONNECT_CLOSE_FAIL));
+				$error->exception_throw(new Exception(EXCEPTION_MSG::CONNECT_CLOSE_FAIL, EXCEPTION_CODE::CONNECT_CLOSE_FAIL));
 			}
 			
 		}
-		catch (ExceptionDC $exception) 
+		catch (Exception $exception) 
 		{	
 			// Catch exception internally if configured to do so.
 			$error->exception_catch();
