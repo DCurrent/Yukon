@@ -191,7 +191,7 @@ class Database implements iDatabase
 			// Missing statement?
 			if(!$this->statement_m)
 			{
-				throw new \Exception(EXCEPTION_MSG::FIELD_COUNT_STATEMENT, EXCEPTION_CODE::FIELD_COUNT_STATEMENT);
+				throw new ExceptionDC(EXCEPTION_MSG::FIELD_COUNT_STATEMENT, EXCEPTION_CODE::FIELD_COUNT_STATEMENT);
 			}
 			
 			// Get field count.
@@ -200,11 +200,11 @@ class Database implements iDatabase
 			// Any errors?
 			if($error_handler->detect_error())
 			{
-				throw new \Exception(EXCEPTION_MSG::FIELD_COUNT_ERROR, EXCEPTION_CODE::FIELD_COUNT_ERROR);
+				throw new ExceptionDC(EXCEPTION_MSG::FIELD_COUNT_ERROR, EXCEPTION_CODE::FIELD_COUNT_ERROR);
 			}
 			
 		}
-		catch (\Exception $exception) 
+		catch (ExceptionDC $exception) 
 		{	
 			$error_handler->exception_catch($exception);
 		}
@@ -223,7 +223,7 @@ class Database implements iDatabase
 			// Missing statement?
 			if(!$this->statement_m)
 			{
-				throw new \Exception(EXCEPTION_MSG::METADATA_STATEMENT, EXCEPTION_CODE::METADATA_STATEMENT);
+				throw new ExceptionDC(EXCEPTION_MSG::METADATA_STATEMENT, EXCEPTION_CODE::METADATA_STATEMENT);
 			}
 			
 			// Get metadata array.
@@ -232,11 +232,11 @@ class Database implements iDatabase
 			// Any errors?
 			if($error_handler->detect_error())
 			{
-				throw new \Exception(EXCEPTION_MSG::METADATA_ERROR, EXCEPTION_CODE::METADATA_ERROR);
+				throw new ExceptionDC(EXCEPTION_MSG::METADATA_ERROR, EXCEPTION_CODE::METADATA_ERROR);
 			}
 			
 		}
-		catch (\Exception $exception) 
+		catch (ExceptionDC $exception) 
 		{	
 			$error_handler->exception_catch($exception);
 		}
