@@ -7,6 +7,14 @@ require_once('config.php');
 // Query object. Execute SQL queries and return data.
 interface iDatabase
 {	
+	// Accessors
+	
+	// Mutators
+	
+	// Request
+	
+	// Results
+	
 	function execute();								// Execute prepared query with current parameters.
 	function get_field_count();						// Return number of fields from query result.
 	function get_field_metadata();					// Fetch and return table row's metadata array (column names, types, etc.).
@@ -18,7 +26,7 @@ interface iDatabase
 	function get_line_object_list(); 				// Create and return a linked list consisting of all line objects from database query.
 	function get_line_params();						// Return line parameters object.
 	function get_next_result();						// Move to and return next result set.
-	function get_options();							// Return options object.
+	function get_config();							// Return config object.
 	function get_row_count();						// Return number of records from query result.
 	function get_row_exists();						// Verify the result contains rows.
 	function get_sql();								// Return current SQl statement.
@@ -27,7 +35,7 @@ interface iDatabase
 	function query_run();								// Prepare and execute query.
 	function set_connection(Connect $value);		// Set connection data member.
 	function set_sql($value);						// Set query sql string data member.
-	function set_options(DatabaseConfig $value);	// Set the object to be used for query options settings.
+	function set_config(DatabaseConfig $value);		// Set the object to be used for query config settings.
 	function set_params(array $value);				// Set query sql parameters data member.
 	function set_line_params(LineConfig $value);	// Set line parameters object.
 }
@@ -37,19 +45,19 @@ class Database implements iDatabase
 	private 
 		$sql			= NULL,		// SQL string.
 		$params 		= array(),	// SQL parameters.
-		$options		= NULL,		// Query options object.
+		$config			= NULL,		// Query config object.
 		$statement		= NULL,		// Prepared/Executed query reference.
-		$line_params	= NULL,		// Line get options.
+		$line_params	= NULL,		// Line get config.
 		$connect		= NULL;		// DB connection object.
 	
-	public function __construct(Connect $connect = NULL, DatabaseConfig $options = NULL, LineConfig $line_params = NULL)
+	public function __construct(Connect $connect = NULL, DatabaseConfig $config = NULL, LineConfig $line_params = NULL)
 	{
 		// Set up memeber objects we'll need. In most cases,
 		// if an argument is NULL, a blank object will
 		// be created and used. See individual methods
 		// for details.
 		$this->construct_connection($connect);
-		$this->construct_options($options);
+		$this->construct_config($config);
 		$this->construct_line_parameters($line_params);	
 	}
 	
@@ -73,9 +81,9 @@ class Database implements iDatabase
 		return $this->line_params;
 	}
 	
-	public function get_options()
+	public function get_config()
 	{
-		return $this->options;
+		return $this->config;
 	}
 	
 	// Mutators	
@@ -84,9 +92,9 @@ class Database implements iDatabase
 		$this->error = $value;
 	}
 		
-	public function set_options(DatabaseConfig $value)
+	public function set_config(DatabaseConfig $value)
 	{
-		$this->options = $value;
+		$this->config = $value;
 	}
 		
 	public function set_line_params(LineConfig $value)
@@ -125,7 +133,7 @@ class Database implements iDatabase
 		return $result;		
 	}
 	
-	private function construct_options(DatabaseConfig $value = NULL)
+	private function construct_config(DatabaseConfig $value = NULL)
 	{
 		$result = NULL;	// Final connection result.
 		
@@ -142,7 +150,7 @@ class Database implements iDatabase
 		}
 		
 		// Populate member with result.
-		$this->options = $result;
+		$this->config = $result;
 	
 		return $result;		
 	}
@@ -183,7 +191,7 @@ class Database implements iDatabase
 	// Return number of fields from query result.
 	public function get_field_count()
 	{
-		$error_handler 	= $this->options->get_error();
+		$error_handler 	= $this->config->get_error();
 		$result			= 0;
 		
 		try 
@@ -390,25 +398,25 @@ class Database implements iDatabase
 		$statement	= NULL;		// Database statement reference.			
 		$sql		= NULL;		// SQL string.
 		$params		= array(); 	// Parameter array.
-		$options	= NULL;		// Query options object.
-		$options_a	= array();	// Query options array.
+		$config	= NULL;		// Query config object.
+		$config_a	= array();	// Query config array.
 		
 		// Dereference data members.
 		$connect	= $this->connect->get_connection();
 		$sql 		= $this->sql;
 		$params 	= $this->params;
-		$options	= $this->options;
+		$config	= $this->config;
 	
-		// Break down options object to array.
-		if($options)
+		// Break down config object to array.
+		if($config)
 		{
-			$options_a['Scrollable'] 		= $options->get_scrollable();
-			$options_a['SendStreamParamsAtExec']	= $options->get_sendstream();
-			$options_a['QueryTimeout'] 		= $options->get_timeout();
+			$config_a['Scrollable'] 		= $config->get_scrollable();
+			$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
+			$config_a['QueryTimeout'] 		= $config->get_timeout();
 		}
 	
 		// Prepare query		
-		$statement = sqlsrv_prepare($connect, $sql, $params, $options_a);
+		$statement = sqlsrv_prepare($connect, $sql, $params, $config_a);
 		
 		// Set DB statement data member.
 		$this->statement = $statement;
@@ -466,25 +474,25 @@ class Database implements iDatabase
 		$statement	= NULL;		// Database result reference.			
 		$sql		= NULL;		// SQL string.
 		$params 	= array(); 	// Parameter array.
-		$options	= NULL;		// Query options object.
-		$options_a	= array();	// Query options array.
+		$config	= NULL;		// Query config object.
+		$config_a	= array();	// Query config array.
 				
 		// Dereference data members.
 		$connect 	= $this->connect->get_connection();
 		$sql 		= $this->sql;
 		$params 	= $this->params;
-		$options 	= $this->options;
+		$config 	= $this->config;
 	
-		// Break down options object to array.
-		if($options)
+		// Break down config object to array.
+		if($config)
 		{
-			$options_a['Scrollable'] 		= $options->get_scrollable();
-			$options_a['SendStreamParamsAtExec']	= $options->get_sendstream();
-			$options_a['QueryTimeout'] 		= $options->get_timeout();
+			$config_a['Scrollable'] 		= $config->get_scrollable();
+			$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
+			$config_a['QueryTimeout'] 		= $config->get_timeout();
 		}
 	
 		// Execute query.
-		$statement = sqlsrv_query($connect, $sql, $params, $options_a);
+		$statement = sqlsrv_query($connect, $sql, $params, $config_a);
 		
 		// Set data member.
 		$this->statement = $statement;
