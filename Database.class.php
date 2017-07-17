@@ -24,7 +24,7 @@ interface iDatabase
 	function get_sql();								// Return current SQl statement.
 	function get_statement();						// Return query statement data member.
 	function prepare();								// Prepare query. Returns statement reference and sends to data member.
-	function query();								// Prepare and execute query.
+	function query_run();								// Prepare and execute query.
 	function set_connection(Connect $value);		// Set connection data member.
 	function set_sql($value);						// Set query sql string data member.
 	function set_options(DatabaseConfig $value);	// Set the object to be used for query options settings.
@@ -460,7 +460,7 @@ class Database implements iDatabase
 	}
 	
 	// Prepare and execute query.
-	public function query()
+	public function query_run()
 	{
 		$connect	= NULL;		// Database connection reference.
 		$statement	= NULL;		// Database result reference.			
