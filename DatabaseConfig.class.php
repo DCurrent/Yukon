@@ -7,31 +7,31 @@ require_once('config.php');
 // Data structure for the options parameter when preparing SQL queries.
 interface iDatabaseConfig
 {	
-	function get_error();			// Error handling object.	
-	function get_scrollable();				// Return cursor scrollable.
-	function get_sendstream();				// Return sendstream.
-	function get_timeout();					// Return timeout.
-	function set_error($value);	// Set exception catch toggle.
-	function set_scrollable($value);		// Set cursor scrollable.
-	function set_sendstream($value);		// Set sendstream.
-	function set_timeout($value);			// Set timeout.
+	function get_error();				// Error handling object.	
+	function get_scrollable();			// Return cursor scrollable.
+	function get_sendstream();			// Return sendstream.
+	function get_timeout();				// Return timeout.
+	function set_error($value);			// Set exception catch toggle.
+	function set_scrollable($value);	// Set cursor scrollable.
+	function set_sendstream($value);	// Set sendstream.
+	function set_timeout($value);		// Set timeout.
 }
 
 class DatabaseConfig implements iDatabaseConfig
 {	
 	private 
 		$error		= NULL,	// Exception catching flag.
-		$scrollable_m 		= NULL,	// Cursor type.
-		$sendstream_m		= NULL,	// Send all stream data at execution (TRUE), or to send stream data in chunks (FALSE)
-		$timeout_m 			= NULL;	// Query timeout in seconds.
+		$scrollable	= NULL,	// Cursor type.
+		$sendstream	= NULL,	// Send all stream data at execution (TRUE), or to send stream data in chunks (FALSE)
+		$timeout 	= NULL;	// Query timeout in seconds.
 		
 	public function __construct(Error $error = NULL)
 	{
 		// Populate defaults.
 		$this->error			= $this->construct_error($error);
-		$this->scrollable_m 	= DEFAULTS::SCROLLABLE;
-		$this->sendstream_m 	= DEFAULTS::SENDSTREAM;
-		$this->timeout_m		= DEFAULTS::TIMEOUT;
+		$this->scrollable 	= DEFAULTS::SCROLLABLE;
+		$this->sendstream 	= DEFAULTS::SENDSTREAM;
+		$this->timeout		= DEFAULTS::TIMEOUT;
 	}
 	
 	// Accessors
@@ -42,17 +42,17 @@ class DatabaseConfig implements iDatabaseConfig
 	
 	public function get_scrollable()
 	{			
-		return $this->scrollable_m;
+		return $this->scrollable;
 	}
 	
 	public function get_sendstream()
 	{		
-		return $this->timeout_m;
+		return $this->timeout;
 	}
 	
 	public function get_timeout()
 	{		
-		return $this->timeout_m;
+		return $this->timeout;
 	}
 	
 	// Mutators
@@ -63,17 +63,17 @@ class DatabaseConfig implements iDatabaseConfig
 	
 	public function set_scrollable($value)
 	{		
-		$this->scrollable_m = $value;
+		$this->scrollable = $value;
 	}
 	
 	public function set_sendstream($value)
 	{		
-		$this->sendstream_m = $value;
+		$this->sendstream = $value;
 	}
 	
 	public function set_timeout($value)
 	{		
-		$this->timeout_m = $value;
+		$this->timeout = $value;
 	}	
 	
 	// Constructors

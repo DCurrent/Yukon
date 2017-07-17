@@ -17,8 +17,8 @@ interface iConnect
 class Connect implements iConnect 
 {			
 	private
-		$connect 		= NULL,	// Database connection resource.
-		$connect_params	= NULL;	// Connection parameters object.
+		$connect	= NULL,	// Database connection resource.
+		$config		= NULL;	// Connection parameters object.
 			
 	public function __construct(ConnectConfig $connect = NULL)
 	{			
@@ -47,7 +47,7 @@ class Connect implements iConnect
 	// Accessors.
 	public function get_config()
 	{
-		return $this->connect_params;
+		return $this->config;
 	}
 	
 	public function get_connection()
@@ -58,7 +58,7 @@ class Connect implements iConnect
 	// Mutators
 	public function set_config(ConnectConfig $value)
 	{
-		$this->connect_params = $value;
+		$this->config = $value;
 	}
 	
 	// Connect to database host. Returns connection.
@@ -67,21 +67,29 @@ class Connect implements iConnect
 		$connect = NULL; // Database connection reference.
 		$db_cred = NULL; // Credentials array.
 		
-		$config	= $this->connect_params;
+		$config	= $this->config;
 		$error	= $config->get_error();
+		
+		
 		
 		// Set up credential array.
 		$db_cred = array('Database'	=> $config->get_name(), 
 				'UID' 		=> $config->get_user(), 
 				'PWD' 		=> $config->get_password(),
-				'CharacterSet' 	=> $config->get_charset());		
-								
+				'CharacterSet' 	=> $config->get_charset());	
+		
 		try 
 		{
+			
+			
 			// Can't connect if there's no host.
 			if(!$config->get_host())
 			{
-				$error->exception_throw(new Exception(EXCEPTION_MSG::CONNECT_OPEN_HOST, EXCEPTION_CODE::CONNECT_OPEN_HOST));				
+				$msg = EXCEPTION_MSG::CONNECT_OPEN_HOST;
+				$msg .= ', Host: '.$config->get_host();
+				$msg .= ', DB: '.$config->get_name();
+				
+				$error->exception_throw(new Exception($msg, EXCEPTION_CODE::CONNECT_OPEN_HOST));				
 			}
 			
 			// Establish database connection.
@@ -111,7 +119,7 @@ class Connect implements iConnect
 	{
 		$result 	= FALSE;					// Connection present and closed?
 		$connect 	= $this->connect;			// Database connection.
-		$config		= $this->connect_params;
+		$config		= $this->config;
 		$error		= $config->get_error();
 		
 		try 

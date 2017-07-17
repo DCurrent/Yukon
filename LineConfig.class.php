@@ -22,70 +22,70 @@ interface iLineConfig
 class LineConfig implements iLineConfig 
 {
 	private 
-		$fetchtype_m	= NULL,		// Line array fetch type.
-		$row_m		= NULL,		// Row to access in a result set that uses a scrollable cursor.
-		$offset_m	= NULL,		// Row to access if row is absolute or relative. 
-		$class_name_m	= NULL,		// Class to instantiate on an object fetch.
-		$class_params_m	= array();	// Parameter array to pass into class constructor.
+		$fetchtype		= NULL,		// Line array fetch type.
+		$row			= NULL,		// Row to access in a result set that uses a scrollable cursor.
+		$offset			= NULL,		// Row to access if row is absolute or relative. 
+		$class_name		= NULL,		// Class to instantiate on an object fetch.
+		$class_params	= array();	// Parameter array to pass into class constructor.
 	
 	public function __construct()
 	{
 		// Populate defaults.
-		$this->fetchtype_m	= \dc\yukon\DEFAULTS::FETCHTYPE;
-		$this->row_m 		= \dc\yukon\DEFAULTS::ROW;
-		$this->offset_m 	= \dc\yukon\DEFAULTS::OFFSET;
+		$this->fetchtype	= \dc\yukon\DEFAULTS::FETCHTYPE;
+		$this->row 			= \dc\yukon\DEFAULTS::ROW;
+		$this->offset 		= \dc\yukon\DEFAULTS::OFFSET;
 	}
 	
 	// Accessors
 	public function get_fetchtype()
 	{		
-		return $this->fetchtype_m;
+		return $this->fetchtype;
 	}
 	
 	public function get_row()
 	{		
-		return $this->row_m;
+		return $this->row;
 	}	
 	
 	public function get_offset()
 	{		
-		return $this->offset_m;
+		return $this->offset;
 	}
 	
 	public function get_class_name()
 	{
-		return $this->class_name_m;
+		return $this->class_name;
 	}
 	
 	public function get_class_params()
 	{
-		return $this->class_params_m;
+		return $this->class_params;
 	}
 	
 	// Mutators
 	public function set_class_name($value)
 	{		
-		$this->class_name_m = $value;
+		$this->class_name = $value;
 	}
 	
 	public function set_class_params(array $value)
 	{		
-		$this->class_params_m = $value;
+		$this->class_params = $value;
 	}
 	
 	public function set_fetchtype($value)
 	{		
-		$this->fetchtype_m = $value;
+		$this->fetchtype = $value;
 	}
 	
 	public function set_row($value)
 	{		
-		$this->row_m = $value;
+		$this->row = $value;
 	}
 	
 	public function set_offset($value)
 	{		
-		$this->offset_m = $value;
+		$this->offset = $value;
 	}
 }
 
