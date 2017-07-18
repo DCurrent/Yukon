@@ -43,12 +43,12 @@ class Database implements iDatabase
 {
 	private $config			= NULL;		// Query config object.
 	private	$connect		= NULL;		// DB connection object.
-	private	$line_params	= NULL;		// Line get config.
+	private	$line_config	= NULL;		// Line get config.
 	private	$params 		= array();	// SQL parameters.
 	private	$sql			= NULL;		// SQL string.
 	private	$statement		= NULL;		// Prepared/Executed query reference.
 	
-	public function __construct(Connect $connect = NULL, DatabaseConfig $config = NULL, LineConfig $line_params = NULL)
+	public function __construct(Connect $connect = NULL, DatabaseConfig $config = NULL, LineConfig $line_config = NULL)
 	{
 		// Set up memeber objects we'll need. In most cases,
 		// if an argument is NULL, a blank object will
@@ -56,7 +56,7 @@ class Database implements iDatabase
 		// for details.
 		$this->construct_connection($connect);
 		$this->construct_config($config);
-		$this->construct_line_parameters($line_params);	
+		$this->construct_line_parameters($line_config);	
 	}
 	
 	public function __destruct()
@@ -76,7 +76,7 @@ class Database implements iDatabase
 	
 	public function get_line_config()
 	{
-		return $this->line_params;
+		return $this->line_config;
 	}
 	
 	public function get_config()
@@ -97,7 +97,7 @@ class Database implements iDatabase
 		
 	public function set_line_config(LineConfig $value)
 	{
-		$this->line_params = $value;
+		$this->line_config = $value;
 	}
 	
 	public function set_connection(Connect $value)
@@ -170,7 +170,7 @@ class Database implements iDatabase
 		}
 		
 		// Populate member with result.
-		$this->line_params = $result;
+		$this->line_config = $result;
 	
 		return $result;		
 	}
@@ -262,9 +262,9 @@ class Database implements iDatabase
 		
 		// Dereference data members.
 		$statement 	= $this->statement;
-		$fetchType	= $this->line_params->get_fetchtype();
-		$row		= $this->line_params->get_row();
-		$offset		= $this->line_params->get_offset();		
+		$fetchType	= $this->line_config->get_fetchtype();
+		$row		= $this->line_config->get_row();
+		$offset		= $this->line_config->get_offset();		
 								
 		// Get line array.
 		$line = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
@@ -321,11 +321,11 @@ class Database implements iDatabase
 		
 		// Dereference data members.
 		$statement 	= $this->statement;
-		$fetchType	= $this->line_params->get_fetchtype();
-		$row		= $this->line_params->get_row();
-		$offset		= $this->line_params->get_offset();
-		$class		= $this->line_params->get_class_name();
-		$class_params	= $this->line_params->get_class_params();
+		$fetchType	= $this->line_config->get_fetchtype();
+		$row		= $this->line_config->get_row();
+		$offset		= $this->line_config->get_offset();
+		$class		= $this->line_config->get_class_name();
+		$class_params	= $this->line_config->get_class_params();
 				
 		// Get line object.
 		$line = sqlsrv_fetch_object($statement, $class, $class_params, $row, $offset);
