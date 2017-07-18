@@ -13,11 +13,11 @@ interface iDatabase
 	function get_statement();						// Return query statement data member.
 	
 	// Mutators
-	function set_connection(Connect $value);		// Set connection data member.
-	function set_sql($value);						// Set query sql string data member.
 	function set_config(DatabaseConfig $value);		// Set the object to be used for query config settings.
+	function set_connection(Connect $value);		// Set connection data member.
+	function set_line_config(LineConfig $value);	// Set line parameters object.
 	function set_params(array $value);				// Set query sql parameters data member.
-	function set_line_params(LineConfig $value);	// Set line parameters object.
+	function set_sql($value);						// Set query sql string data member.
 	
 	// Request
 	function query_execute();						// Execute prepared query with current parameters.
@@ -95,7 +95,7 @@ class Database implements iDatabase
 		$this->config = $value;
 	}
 		
-	public function set_line_params(LineConfig $value)
+	public function set_line_config(LineConfig $value)
 	{
 		$this->line_params = $value;
 	}
