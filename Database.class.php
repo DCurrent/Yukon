@@ -9,6 +9,7 @@ interface iDatabase
 {	
 	// Accessors
 	function get_config();							// Return config object.
+	function get_line_config();						// Return line parameters object.
 	function get_sql();								// Return current SQl statement.
 	function get_statement();						// Return query statement data member.
 	
@@ -33,7 +34,6 @@ interface iDatabase
 	function get_line_object();						// Fetch and return line object from table rows.
 	function get_line_object_all();					// Create and return a 2D array consisting of all line arrays from database query.
 	function get_line_object_list(); 				// Create and return a linked list consisting of all line objects from database query.
-	function get_line_params();						// Return line parameters object.
 	function get_next_result();						// Move to and return next result set.
 	function get_row_count();						// Return number of records from query result.
 	function get_row_exists();						// Verify the result contains rows.
@@ -74,7 +74,7 @@ class Database implements iDatabase
 		return $this->connect;
 	}
 	
-	public function get_line_params()
+	public function get_line_config()
 	{
 		return $this->line_params;
 	}
