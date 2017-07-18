@@ -21,7 +21,7 @@ interface iDatabase
 	
 	// Request
 	function query_execute();						// Execute prepared query with current parameters.
-	function prepare();								// Prepare query. Returns statement reference and sends to data member.
+	function query_prepare();						// Prepare query. Returns statement reference and sends to data member.
 	function query_run();							// Prepare and execute query.
 	
 	// Results
@@ -390,7 +390,7 @@ class Database implements iDatabase
 	}
 	
 	// Prepare query. Returns statement reference and updates data member.
-	public function prepare()
+	public function query_prepare()
 	{
 		$connect	= NULL;		// Database connection reference.
 		$statement	= NULL;		// Database statement reference.			
