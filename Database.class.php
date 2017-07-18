@@ -20,7 +20,7 @@ interface iDatabase
 	function set_line_params(LineConfig $value);	// Set line parameters object.
 	
 	// Request
-	function execute();								// Execute prepared query with current parameters.
+	function query_execute();						// Execute prepared query with current parameters.
 	function prepare();								// Prepare query. Returns statement reference and sends to data member.
 	function query_run();							// Prepare and execute query.
 	
@@ -380,7 +380,7 @@ class Database implements iDatabase
 	}
 	
 	// Execute prepared query with current parameters.
-	public function execute()
+	public function query_execute()
 	{
 		$result     = FALSE;	// Result of execution.
 		
