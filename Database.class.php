@@ -9,7 +9,9 @@ interface iDatabase
 {	
 	// Accessors
 	function get_config();							// Return config object.
+	function get_connection();						// Return connection object.
 	function get_line_config();						// Return line parameters object.
+	function get_param_array();						// Return query parameter array.
 	function get_sql();								// Return current SQl statement.
 	function get_statement();						// Return query statement data member.
 	
@@ -19,6 +21,7 @@ interface iDatabase
 	function set_line_config(LineConfig $value);	// Set line parameters object.
 	function set_params(array $value);				// Set query sql parameters data member.
 	function set_sql($value);						// Set query sql string data member.
+	function set_statement($value);					// Set query statement reference.
 	
 	// Request
 	function query_execute();						// Execute prepared query with current parameters.
@@ -64,9 +67,9 @@ class Database implements iDatabase
 	}
 	
 	// Accessors
-	public function get_error()
+	public function get_config()
 	{
-		return $this->error;	
+		return $this->config;
 	}
 	
 	public function get_connection()
@@ -74,35 +77,50 @@ class Database implements iDatabase
 		return $this->connect;
 	}
 	
+	public function get_error()
+	{
+		return $this->error;	
+	}
+		
 	public function get_line_config()
 	{
 		return $this->line_config;
 	}
 	
-	public function get_config()
+	public function get_param_array()
 	{
-		return $this->config;
+		return $this->params;	
+	}
+	
+	public function get_statement()
+	{
+		return $this->statement;
 	}
 	
 	// Mutators	
-	public function set_error(Error $value)
-	{
-		$this->error = $value;
-	}
-		
 	public function set_config(DatabaseConfig $value)
 	{
 		$this->config = $value;
-	}
-		
-	public function set_line_config(LineConfig $value)
-	{
-		$this->line_config = $value;
 	}
 	
 	public function set_connection(Connect $value)
 	{
 		$this->connect = $value;
+	}
+	
+	public function set_error(Error $value)
+	{
+		$this->error = $value;
+	}
+			
+	public function set_line_config(LineConfig $value)
+	{
+		$this->line_config = $value;
+	}
+	
+	public function set_statement($value)
+	{
+		$this->statement = $value;
 	}
 	
 	// Populate connection member with argument if 
@@ -497,12 +515,6 @@ class Database implements iDatabase
 		
 		// Return query ID resource.
 		return $statement;
-	}
-	
-	// Return query statement data member.
-	public function get_statement()
-	{
-		return $this->statement;
 	}
 }
 
