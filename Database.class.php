@@ -32,7 +32,7 @@ interface iDatabase
 	function get_sql();								// Return current SQl statement.
 	function get_statement();						// Return query statement data member.
 	function prepare();								// Prepare query. Returns statement reference and sends to data member.
-	function query_run();								// Prepare and execute query.
+	function query_run();							// Prepare and execute query.
 	function set_connection(Connect $value);		// Set connection data member.
 	function set_sql($value);						// Set query sql string data member.
 	function set_config(DatabaseConfig $value);		// Set the object to be used for query config settings.
@@ -42,13 +42,14 @@ interface iDatabase
 
 class Database implements iDatabase
 {
-	private 
-		$sql			= NULL,		// SQL string.
-		$params 		= array(),	// SQL parameters.
-		$config			= NULL,		// Query config object.
-		$statement		= NULL,		// Prepared/Executed query reference.
-		$line_params	= NULL,		// Line get config.
-		$connect		= NULL;		// DB connection object.
+	private $config			= NULL;		// Query config object.
+	private	$connect		= NULL;		// DB connection object.
+	private	$line_params	= NULL;		// Line get config.
+	private	$params 		= array();	// SQL parameters.
+	private	$sql			= NULL;		// SQL string.
+	private	$statement		= NULL;		// Prepared/Executed query reference.
+		
+		
 	
 	public function __construct(Connect $connect = NULL, DatabaseConfig $config = NULL, LineConfig $line_params = NULL)
 	{
