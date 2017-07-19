@@ -10,6 +10,7 @@ interface iConnect
 	function get_config();
 	function get_connection();					// Return database connection resource.
 	function set_config(ConnectConfig $value);	// Set config object.
+	function close_connection();				// Close current connection.
 	function open_connection();					// Attempt database connection.
 }
 
