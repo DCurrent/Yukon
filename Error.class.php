@@ -84,14 +84,6 @@ class Error implements iError
 		$error 			= NULL;	// Element of errors - Collection of error attributes.
 		$result			= NULL;	// Final result output.
 		
-		// If error trapping is off, just exit. Let's
-		// hope the application will be handling
-		// the error instead.
-		if(!$this->config->get_exception_throw())
-		{
-			return;
-		}
-			
 		// Get any errors. sqlsrv driver returns
 		// errors as a 2D array. Each error is an
 		// element comprised of an array of error
