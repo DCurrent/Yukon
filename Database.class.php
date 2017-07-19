@@ -214,11 +214,44 @@ class Database implements iDatabase
 	// Free statement and clear statement member.
 	public function free_statement()
 	{
+		$result;
+		$error_handler 	= $this->config->get_error();
+		
 		// Free statement resources.
 		if($this->statement)
 		{
 			sqlsrv_free_stmt($this->statement);
 			unset($this->statement);
+		}
+		
+		try 
+		{
+			// Verify statement.
+			if(!$this->statement)
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_STATEMENT, EXCEPTION_CODE::FREE_STATEMENT_STATEMENT));				
+			}
+			
+			// Attempt to free statement.
+			$result = sqlsrv_free_stmt($this->statement);
+			unset($this->statement);
+			
+			// Any errors?
+			if($error_handler->detect_error())
+			{
+				$error->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_ERROR, EXCEPTION_CODE::FREE_STATEMENT_ERROR));
+			}
+			
+			// False/Failure returned.
+			if(!$result)
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_FAIL, EXCEPTION_CODE::FREE_STATEMENT_FAIL));
+			}			
+		}
+		catch (Exception $exception) 
+		{
+			// Catch exception internally if configured to do so.
+			$error->exception_catch();
 		}
 	}
 	
