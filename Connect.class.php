@@ -80,8 +80,6 @@ class Connect implements iConnect
 		
 		try 
 		{
-			
-			
 			// Can't connect if there's no host.
 			if(!$config->get_host())
 			{

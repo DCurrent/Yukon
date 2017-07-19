@@ -51,8 +51,11 @@ abstract class EXCEPTION_CODE
 	const FREE_STATEMENT_STATEMENT	= 8;	// Free statement called when there is no valid statement.
 	const METADATA_ERROR			= 9;	// Metadata returned an error code.
 	const METADATA_STATEMENT		= 11;	// Missing or invalid query statement getting metadata.
-	const ROW_COUNT_ERROR			= 12;	// Row count returned an error code.
-	const ROW_COUNT_STATEMENT		= 13;	// Missing or invalid query statement getting row count.
+	const QUERY_EXECUTE_ERROR		= 12;	// Execute returned an error code.
+	const QUERY_EXECUTE_FAIL		= 13;	// Execute returned a failure response.
+	const QUERY_EXECUTE_STATEMENT	= 14;	// Missing or invalid query statement on execution.
+	const ROW_COUNT_ERROR			= 15;	// Row count returned an error code.
+	const ROW_COUNT_STATEMENT		= 16;	// Missing or invalid query statement getting row count.
 }
 
 // Output given by interal exception handler.
@@ -69,6 +72,9 @@ abstract class EXCEPTION_MSG
 	const FREE_STATEMENT_STATEMENT	= 'Missing or invalid statement, cannot be freed.';
 	const METADATA_ERROR			= 'Metadata retrieval error.';
 	const METADATA_STATEMENT		= 'Missing or invalid statement while attempting to retrieve metadata.';
+	const QUERY_EXECUTE_ERROR		= 'Error executing preared query.';
+	const QUERY_EXECUTE_FAIL		= 'Failed to execute prepared query.';
+	const QUERY_EXECUTE_STATEMENT	= 'Missing or invalid statement while attempting to execute query.';
 	const ROW_COUNT_ERROR			= 'Row count error.';
 	const ROW_COUNT_STATEMENT		= 'Missing or invalid statement while attempting to retrieve row count.';
 }

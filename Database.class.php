@@ -217,13 +217,6 @@ class Database implements iDatabase
 		$result;
 		$error_handler 	= $this->config->get_error();
 		
-		// Free statement resources.
-		if($this->statement)
-		{
-			sqlsrv_free_stmt($this->statement);
-			unset($this->statement);
-		}
-		
 		try 
 		{
 			// Verify statement.
@@ -258,10 +251,38 @@ class Database implements iDatabase
 	// Execute prepared query with current parameters.
 	public function query_execute()
 	{
-		$result     = FALSE;	// Result of execution.
+		$result;
+		$error_handler 	= $this->config->get_error();
 		
-		sqlsrv_execute($this->statement);
-		
+		try 
+		{
+			// Verify statement.
+			if(!$this->statement)
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_STATEMENT, EXCEPTION_CODE::QUERY_EXECUTE_STATEMENT));				
+			}
+			
+			// Execute prepared query.
+			$result = sqlsrv_execute($this->statement);
+			
+			// Any errors?
+			if($error_handler->detect_error())
+			{
+				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_ERROR, EXCEPTION_CODE::QUERY_EXECUTE_ERROR));
+			}
+			
+			// False/Failure returned.
+			if(!$result)
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_FAIL, EXCEPTION_CODE::QUERY_EXECUTE_FAIL));
+			}			
+		}
+		catch (Exception $exception) 
+		{
+			// Catch exception internally if configured to do so.
+			$error->exception_catch();
+		}
+				
 		return $result;	
 	}
 	
