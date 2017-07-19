@@ -19,11 +19,12 @@ interface iDatabase
 	function set_config(DatabaseConfig $value);		// Set the object to be used for query config settings.
 	function set_connection(Connect $value);		// Set connection data member.
 	function set_line_config(LineConfig $value);	// Set line parameters object.
-	function set_params(array $value);				// Set query sql parameters data member.
+	function set_param_array(array $value);			// Set query sql parameter array data member.
 	function set_sql($value);						// Set query sql string data member.
 	function set_statement($value);					// Set query statement reference.
 	
 	// Request
+	function free_statement();						// Free statement and clear statement member.
 	function query_execute();						// Execute prepared query with current parameters.
 	function query_prepare();						// Prepare query. Returns statement reference and sends to data member.
 	function query_run();							// Prepare and execute query.
@@ -51,6 +52,7 @@ class Database implements iDatabase
 	private	$sql			= NULL;		// SQL string.
 	private	$statement		= NULL;		// Prepared/Executed query reference.
 	
+	// Magic
 	public function __construct(Connect $connect = NULL, DatabaseConfig $config = NULL, LineConfig $line_config = NULL)
 	{
 		// Set up memeber objects we'll need. In most cases,
@@ -66,67 +68,7 @@ class Database implements iDatabase
 	{		
 	}
 	
-	// Accessors
-	public function get_config()
-	{
-		return $this->config;
-	}
-	
-	public function get_connection()
-	{
-		return $this->connect;
-	}
-	
-	public function get_error()
-	{
-		return $this->error;	
-	}
-		
-	public function get_line_config()
-	{
-		return $this->line_config;
-	}
-	
-	public function get_param_array()
-	{
-		return $this->params;	
-	}
-	
-	public function get_statement()
-	{
-		return $this->statement;
-	}
-	
-	// Mutators	
-	public function set_config(DatabaseConfig $value)
-	{
-		$this->config = $value;
-	}
-	
-	public function set_connection(Connect $value)
-	{
-		$this->connect = $value;
-	}
-	
-	public function set_error(Error $value)
-	{
-		$this->error = $value;
-	}
-			
-	public function set_line_config(LineConfig $value)
-	{
-		$this->line_config = $value;
-	}
-	
-	public function set_statement($value)
-	{
-		$this->statement = $value;
-	}
-	
-	// Populate connection member with argument if 
-	// the argument is a valid connection object.
-	// Otherwise populate with a new connection
-	// object. 
+	// *Constructors
 	private function construct_connection(Connect $value = NULL)
 	{
 		$result = NULL;	// Final connection result.
@@ -193,7 +135,83 @@ class Database implements iDatabase
 		return $result;		
 	}
 	
-	// Frees statement and clears associated member.
+	
+	// *Accessors
+	public function get_config()
+	{
+		return $this->config;
+	}
+	
+	public function get_connection()
+	{
+		return $this->connect;
+	}
+	
+	public function get_error()
+	{
+		return $this->error;	
+	}
+		
+	public function get_line_config()
+	{
+		return $this->line_config;
+	}
+	
+	public function get_param_array()
+	{
+		return $this->params;	
+	}
+	
+	public function get_statement()
+	{
+		return $this->statement;
+	}
+	
+	// *Mutators
+	public function get_sql()
+	{
+		return $this->sql;
+	}
+	
+	// Set query sql parameters data member.
+	public function set_param_array(array $value)
+	{		
+		$this->params = $value;
+	}
+	
+	public function set_config(DatabaseConfig $value)
+	{
+		$this->config = $value;
+	}
+	
+	public function set_connection(Connect $value)
+	{
+		$this->connect = $value;
+	}
+	
+	public function set_error(Error $value)
+	{
+		$this->error = $value;
+	}
+			
+	public function set_line_config(LineConfig $value)
+	{
+		$this->line_config = $value;
+	}
+	
+	public function set_sql($value)
+	{
+		$this->sql = $value;
+	}
+	
+	public function set_statement($value)
+	{
+		$this->statement = $value;
+	}
+	
+	
+	// *Request
+	// Free statement and clear statement member.
 	public function free_statement()
 	{
 		// Free statement resources.
@@ -204,7 +222,85 @@ class Database implements iDatabase
 		}
 	}
 	
-	// Return number of fields from query result.
+	// Execute prepared query with current parameters.
+	public function query_execute()
+	{
+		$result     = FALSE;	// Result of execution.
+		
+		sqlsrv_execute($this->statement);
+		
+		return $result;	
+	}
+	
+	// Prepare query. Returns statement reference and updates data member.
+	public function query_prepare()
+	{
+		$connect	= NULL;		// Database connection reference.
+		$statement	= NULL;		// Database statement reference.			
+		$sql		= NULL;		// SQL string.
+		$params		= array(); 	// Parameter array.
+		$config	= NULL;		// Query config object.
+		$config_a	= array();	// Query config array.
+		
+		// Dereference data members.
+		$connect	= $this->connect->get_connection();
+		$sql 		= $this->sql;
+		$params 	= $this->params;
+		$config	= $this->config;
+	
+		// Break down config object to array.
+		if($config)
+		{
+			$config_a['Scrollable'] 		= $config->get_scrollable();
+			$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
+			$config_a['QueryTimeout'] 		= $config->get_timeout();
+		}
+	
+		// Prepare query		
+		$statement = sqlsrv_prepare($connect, $sql, $params, $config_a);
+		
+		// Set DB statement data member.
+		$this->statement = $statement;
+		
+		// Return statement reference.
+		return $statement;		
+	}
+	
+	// Prepare and execute query.
+	public function query_run()
+	{
+		$connect	= NULL;		// Database connection reference.
+		$statement	= NULL;		// Database result reference.			
+		$sql		= NULL;		// SQL string.
+		$params 	= array(); 	// Parameter array.
+		$config	= NULL;		// Query config object.
+		$config_a	= array();	// Query config array.
+				
+		// Dereference data members.
+		$connect 	= $this->connect->get_connection();
+		$sql 		= $this->sql;
+		$params 	= $this->params;
+		$config 	= $this->config;
+	
+		// Break down config object to array.
+		if($config)
+		{
+			$config_a['Scrollable'] 		= $config->get_scrollable();
+			$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
+			$config_a['QueryTimeout'] 		= $config->get_timeout();
+		}
+	
+		// Execute query.
+		$statement = sqlsrv_query($connect, $sql, $params, $config_a);
+		
+		// Set data member.
+		$this->statement = $statement;
+		
+		// Return query ID resource.
+		return $statement;
+	}
+	
+	// *Results.
 	public function get_field_count()
 	{
 		$error_handler 	= $this->config->get_error();
@@ -397,68 +493,6 @@ class Database implements iDatabase
 	
 	}
 	
-	// Execute prepared query with current parameters.
-	public function query_execute()
-	{
-		$result     = FALSE;	// Result of execution.
-		
-		sqlsrv_execute($this->statement);
-		
-		return $result;	
-	}
-	
-	// Prepare query. Returns statement reference and updates data member.
-	public function query_prepare()
-	{
-		$connect	= NULL;		// Database connection reference.
-		$statement	= NULL;		// Database statement reference.			
-		$sql		= NULL;		// SQL string.
-		$params		= array(); 	// Parameter array.
-		$config	= NULL;		// Query config object.
-		$config_a	= array();	// Query config array.
-		
-		// Dereference data members.
-		$connect	= $this->connect->get_connection();
-		$sql 		= $this->sql;
-		$params 	= $this->params;
-		$config	= $this->config;
-	
-		// Break down config object to array.
-		if($config)
-		{
-			$config_a['Scrollable'] 		= $config->get_scrollable();
-			$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
-			$config_a['QueryTimeout'] 		= $config->get_timeout();
-		}
-	
-		// Prepare query		
-		$statement = sqlsrv_prepare($connect, $sql, $params, $config_a);
-		
-		// Set DB statement data member.
-		$this->statement = $statement;
-		
-		// Return statement reference.
-		return $statement;		
-	}
-	
-	// Set query sql string data member.
-	public function set_sql($value)
-	{
-		$this->sql = $value;
-	}
-	
-	// Return query sql string data member.
-	public function get_sql()
-	{
-		return $this->sql;
-	}
-	
-	// Set query sql parameters data member.
-	public function set_params(array $value)
-	{		
-		$this->params = $value;
-	}
-	
 	// Return number of records from query result.	
 	public function get_row_count()
 	{
@@ -483,39 +517,6 @@ class Database implements iDatabase
 		return $result;
 	}
 	
-	// Prepare and execute query.
-	public function query_run()
-	{
-		$connect	= NULL;		// Database connection reference.
-		$statement	= NULL;		// Database result reference.			
-		$sql		= NULL;		// SQL string.
-		$params 	= array(); 	// Parameter array.
-		$config	= NULL;		// Query config object.
-		$config_a	= array();	// Query config array.
-				
-		// Dereference data members.
-		$connect 	= $this->connect->get_connection();
-		$sql 		= $this->sql;
-		$params 	= $this->params;
-		$config 	= $this->config;
-	
-		// Break down config object to array.
-		if($config)
-		{
-			$config_a['Scrollable'] 		= $config->get_scrollable();
-			$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
-			$config_a['QueryTimeout'] 		= $config->get_timeout();
-		}
-	
-		// Execute query.
-		$statement = sqlsrv_query($connect, $sql, $params, $config_a);
-		
-		// Set data member.
-		$this->statement = $statement;
-		
-		// Return query ID resource.
-		return $statement;
-	}
 }
 
 ?>
