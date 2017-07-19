@@ -293,21 +293,21 @@ class Database implements iDatabase
 		$statement	= NULL;		// Database statement reference.			
 		$sql		= NULL;		// SQL string.
 		$params		= array(); 	// Parameter array.
-		$config	= NULL;		// Query config object.
+		$config		= NULL;		// Query config object.
 		$config_a	= array();	// Query config array.
 		
 		// Dereference data members.
 		$connect	= $this->connect->get_connection();
 		$sql 		= $this->sql;
 		$params 	= $this->params;
-		$config	= $this->config;
+		$config		= $this->config;
 	
 		// Break down config object to array.
 		if($config)
 		{
-			$config_a['Scrollable'] 		= $config->get_scrollable();
+			$config_a['Scrollable'] 			= $config->get_scrollable();
 			$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
-			$config_a['QueryTimeout'] 		= $config->get_timeout();
+			$config_a['QueryTimeout'] 			= $config->get_timeout();
 		}
 	
 		// Prepare query		
