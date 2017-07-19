@@ -6,10 +6,10 @@ Yukon is an object-oriented library that serves as an abstraction and control la
 
 Yukon seeks to solve this latter caveat by creating an object-oriented interface for your applications to interact with the database engine. Additionally, Yukon is fully extensible and future proofed in every way possible. If you ever need to switch drivers or database engines, you need only modify Yukon as opposed to your application.
 
-## Installation / Use
-
-See the [Yukon Wiki](https://github.com/DCurrent/Yukon/wiki) for full documentation and instructions.
-
 ## Name Origin
 
 Yukon is the primary river of Alaska, bisecting the state. It is at once a  massive and dangerous barrier, but also a life giving resource and transport when leveraged proorly - just like databases to an application.
+
+# Installation / Use
+
+See the [Yukon Wiki](https://github.com/DCurrent/Yukon/wiki) for full documentation and instructions.
