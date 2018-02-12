@@ -56,11 +56,13 @@ abstract class EXCEPTION_CODE
 	const QUERY_EXECUTE_STATEMENT	= 14;	// Missing or invalid query statement on execution.
 	const QUERY_PREPARE_CONFIG		= 15;	// Prepare query - No valid database config.
 	const QUERY_PREPARE_CONNECTION	= 16;	// Prepare query - No connection to database.
-	const QUERY_PREPARE_PARAM_ARRAY	= 17;	// Prepare query - No valid array of parameters.
-	const QUERY_PREPARE_PARAM_LIST	= 18;	// Prepare query - No valid list of parameters.
-	const QUERY_PREPARE_SQL			= 19;	// Prepare query - No valid SQL string.
-	const ROW_COUNT_ERROR			= 20;	// Row count returned an error code.
-	const ROW_COUNT_STATEMENT		= 21;	// Missing or invalid query statement getting row count.
+	const QUERY_PREPARE_ERROR		= 17;	// Prepare query - Driver prepare method returned an error code.
+	const QUERY_PREPARE_FAIL		= 18;	// Prepare query - Driver prepare method returned a failure response.
+	const QUERY_PREPARE_PARAM_ARRAY	= 19;	// Prepare query - No valid array of parameters.
+	const QUERY_PREPARE_PARAM_LIST	= 20;	// Prepare query - No valid list of parameters.
+	const QUERY_PREPARE_SQL			= 21;	// Prepare query - No valid SQL string.
+	const ROW_COUNT_ERROR			= 22;	// Row count returned an error code.
+	const ROW_COUNT_STATEMENT		= 23;	// Missing or invalid query statement getting row count.
 }
 
 // Output given by interal exception handler.
@@ -82,6 +84,8 @@ abstract class EXCEPTION_MSG
 	const QUERY_EXECUTE_STATEMENT	= 'Query Execute - Missing or invalid statement.';
 	const QUERY_PREPARE_CONFIG		= 'Query Prepare - Missing or invalid database config.';
 	const QUERY_PREPARE_CONNECTION	= 'Query Prepare - Missing or invalid database connection.';
+	const QUERY_PREPARE_ERROR		= 'Query Prepare - Error occurred.';
+	const QUERY_PREPARE_FAIL		= 'Query Prepare - Failed to prepare query statement.';
 	const QUERY_PREPARE_PARAM_ARRAY	= 'Query prepare - Missing or invalid parameter array.';
 	const QUERY_PREPARE_PARAM_LIST	= 'Query prepare - Missing or invalid parameter list.';
 	const QUERY_PREPARE_SQL			= 'Query prepare - Missing or invalid SQL string.';
