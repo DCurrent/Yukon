@@ -89,6 +89,10 @@ abstract class EXCEPTION_MSG
 	const FREE_STATEMENT_FAIL		= 'Free statement - Failed to free statement.';
 	const FREE_STATEMENT_STATEMENT	= 'Free Statement - No valid statement to free.';
 	
+	const LINE_ARRAY_ERROR			= 'Line Array - Error occurred..';
+	const LINE_ARRAY_FAIL			= 'Line Array - Failed to get line array.';
+	const LINE_ARRAY_STATEMENT		= 'Line Array - Missing or invalid statement.';
+	
 	const METADATA_ERROR			= 'Get Metadata - Error occurred.';
 	const METADATA_STATEMENT		= 'Get Metadata - Missing or invalid statement.';
 	
