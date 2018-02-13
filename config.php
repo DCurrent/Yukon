@@ -40,29 +40,38 @@ abstract class DEFAULTS
 // in catch blocks outside of Yukon.
 abstract class EXCEPTION_CODE
 {
-	const CONNECT_CLOSE_FAIL		= 0;	// Driver returned failure response attempting to close database connection.
-	const CONNECT_CLOSE_CONNECTION	= 1;	// There is no connection to close.
-	const CONNECT_OPEN_FAIL			= 2;	// Driver returned failure response attempting to connect to database.
-	const CONNECT_OPEN_HOST			= 3; 	// Application did not provide a host target to connect.
-	const FIELD_COUNT_ERROR			= 4;	// Field count returned an error code.
-	const FIELD_COUNT_STATEMENT		= 5;	// Missing or invalid query statement getting field count.
-	const FREE_STATEMENT_ERROR		= 6;	// Free statement returned an error code.
-	const FREE_STATEMENT_FAIL		= 7;	// Free statement returned failure.
-	const FREE_STATEMENT_STATEMENT	= 8;	// Free statement called when there is no valid statement.
-	const METADATA_ERROR			= 9;	// Metadata returned an error code.
-	const METADATA_STATEMENT		= 11;	// Missing or invalid query statement getting metadata.
-	const QUERY_EXECUTE_ERROR		= 12;	// Execute returned an error code.
-	const QUERY_EXECUTE_FAIL		= 13;	// Execute returned a failure response.
-	const QUERY_EXECUTE_STATEMENT	= 14;	// Missing or invalid query statement on execution.
-	const QUERY_PREPARE_CONFIG		= 15;	// Prepare query - No valid database config.
-	const QUERY_PREPARE_CONNECTION	= 16;	// Prepare query - No connection to database.
-	const QUERY_PREPARE_ERROR		= 17;	// Prepare query - Driver prepare method returned an error code.
-	const QUERY_PREPARE_FAIL		= 18;	// Prepare query - Driver prepare method returned a failure response.
-	const QUERY_PREPARE_PARAM_ARRAY	= 19;	// Prepare query - No valid array of parameters.
-	const QUERY_PREPARE_PARAM_LIST	= 20;	// Prepare query - No valid list of parameters.
-	const QUERY_PREPARE_SQL			= 21;	// Prepare query - No valid SQL string.
-	const ROW_COUNT_ERROR			= 22;	// Row count returned an error code.
-	const ROW_COUNT_STATEMENT		= 23;	// Missing or invalid query statement getting row count.
+	const CONNECT_CLOSE_FAIL		= 0X0;		// Driver returned failure response attempting to close database connection.
+	const CONNECT_CLOSE_CONNECTION	= 0X1;		// There is no connection to close.
+	const CONNECT_OPEN_FAIL			= 0X2;		// Driver returned failure response attempting to connect to database.
+	const CONNECT_OPEN_HOST			= 0X3; 		// Application did not provide a host target to connect.
+	
+	const FIELD_COUNT_ERROR			= 0X64;		// Field count returned an error code.
+	const FIELD_COUNT_STATEMENT		= 0X65;		// Missing or invalid query statement getting field count.
+	
+	const FREE_STATEMENT_ERROR		= 0XC8;		// Free statement returned an error code.
+	const FREE_STATEMENT_FAIL		= 0XC9;		// Free statement returned failure.
+	const FREE_STATEMENT_STATEMENT	= 0XCA;
+		
+	const LINE_ARRAY_ERROR			= 0X12C;	// Line array - Line array fetch method returned an error code.
+	const LINE_ARRAY_FAIL			= 0X12D;	// Line array - Line array fetch method returned a failure response.
+	const LINE_ARRAY_STATEMENT		= 0X12E;	// Line array - Invalid query statement.
+	
+	const METADATA_ERROR			= 0X1F4;	// Metadata returned an error code.
+	const METADATA_STATEMENT		= 0X1F5;	// Missing or invalid query statement getting metadata.
+	
+	const QUERY_EXECUTE_ERROR		= 0X258;	// Execute returned an error code.
+	const QUERY_EXECUTE_FAIL		= 0X259;	// Execute returned a failure response.
+	const QUERY_EXECUTE_STATEMENT	= 0X25A;	// Missing or invalid query statement on execution.
+	const QUERY_PREPARE_CONFIG		= 0X25B;	// Prepare query - No valid database config.
+	const QUERY_PREPARE_CONNECTION	= 0X25C;	// Prepare query - No connection to database.
+	const QUERY_PREPARE_ERROR		= 0X25D;	// Prepare query - Driver prepare method returned an error code.
+	const QUERY_PREPARE_FAIL		= 0X25E;	// Prepare query - Driver prepare method returned a failure response.
+	const QUERY_PREPARE_PARAM_ARRAY	= 0X25F;	// Prepare query - No valid array of parameters.
+	const QUERY_PREPARE_PARAM_LIST	= 0X260;	// Prepare query - No valid list of parameters.
+	const QUERY_PREPARE_SQL			= 0X261;	// Prepare query - No valid SQL string.
+	
+	const ROW_COUNT_ERROR			= 0X2BC;	// Row count returned an error code.
+	const ROW_COUNT_STATEMENT		= 0X2BD;	// Missing or invalid query statement getting row count.
 }
 
 // Output given by interal exception handler.
@@ -72,13 +81,17 @@ abstract class EXCEPTION_MSG
 	const CONNECT_CLOSE_CONNECTION	= 'Close Connection - No valid connection to close.';
 	const CONNECT_OPEN_FAIL			= 'Close Connection - Failed to open connection with host.';
 	const CONNECT_OPEN_HOST			= 'Close Connection - Missing or invalid host argument.';
+	
 	const FIELD_COUNT_ERROR			= 'Field Count - Error occurred.';
 	const FIELD_COUNT_STATEMENT		= 'Field Count - Missing or invalid statement.';
+	
 	const FREE_STATEMENT_ERROR		= 'Free Statement - Error occurred.';
 	const FREE_STATEMENT_FAIL		= 'Free statement - Failed to free statement.';
 	const FREE_STATEMENT_STATEMENT	= 'Free Statement - No valid statement to free.';
+	
 	const METADATA_ERROR			= 'Get Metadata - Error occurred.';
 	const METADATA_STATEMENT		= 'Get Metadata - Missing or invalid statement.';
+	
 	const QUERY_EXECUTE_ERROR		= 'Query Execute - Error occurred.';
 	const QUERY_EXECUTE_FAIL		= 'Query Execute - Failed to execute prepared query.';
 	const QUERY_EXECUTE_STATEMENT	= 'Query Execute - Missing or invalid statement.';
@@ -89,6 +102,7 @@ abstract class EXCEPTION_MSG
 	const QUERY_PREPARE_PARAM_ARRAY	= 'Query prepare - Missing or invalid parameter array.';
 	const QUERY_PREPARE_PARAM_LIST	= 'Query prepare - Missing or invalid parameter list.';
 	const QUERY_PREPARE_SQL			= 'Query prepare - Missing or invalid SQL string.';
+	
 	const ROW_COUNT_ERROR			= 'Get Row Count - Error occurred.';
 	const ROW_COUNT_STATEMENT		= 'Get Row Count - Missing or invalid statement.';
 }
