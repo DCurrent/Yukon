@@ -368,7 +368,7 @@ class Database implements iDatabase
 		$statement	= NULL;		// Database result reference.			
 		$sql		= NULL;		// SQL string.
 		$params 	= array(); 	// Parameter array.
-		$config	= NULL;		// Query config object.
+		$config		= NULL;		// Query config object.
 		$config_a	= array();	// Query config array.
 				
 		// Dereference data members.
@@ -448,8 +448,7 @@ class Database implements iDatabase
 			if($error_handler->detect_error())
 			{
 				throw new Exception(EXCEPTION_MSG::METADATA_ERROR, EXCEPTION_CODE::METADATA_ERROR);
-			}
-			
+			}			
 		}
 		catch (Exception $exception) 
 		{	
@@ -463,7 +462,7 @@ class Database implements iDatabase
 	// Fetch line array from table rows.
 	public function get_line_array()
 	{
-		$line		= FALSE;	// Database line array.
+		$result		= FALSE;	// Database line array.
 		$statement	= NULL; 	// Query result reference.
 		$fetchType	= NULL;		// Line array fetchtype.
 		$row		= NULL;		// Row type.
@@ -474,13 +473,40 @@ class Database implements iDatabase
 		$fetchType	= $this->line_config->get_fetchtype();
 		$row		= $this->line_config->get_row();
 		$offset		= $this->line_config->get_offset();		
-								
-		// Get line array.
-		$line = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
-
+		
+		
+		try 
+		{
+			// Missing statement?
+			if(!$statement)
+			{
+				throw new Exception(EXCEPTION_MSG::LINE_ARRAY_STATEMENT, EXCEPTION_CODE::LINE_ARRAY_STATEMENT);
+			}
+			
+			// Get line array.
+			$result = sqlsrv_fetch_array($statement, $fetchType, $row, $offset);
+			
+			// Any errors?
+			if($error_handler->detect_error())
+			{
+				throw new Exception(EXCEPTION_MSG::LINE_ARRAY_ERROR, EXCEPTION_CODE::LINE_ARRAY_ERROR);
+			}
+			
+			// False/Failure returned.
+			if($result === FALSE)
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::LINE_ARRAY_FAIL, EXCEPTION_CODE::LINE_ARRAY_FAIL));
+			}
+			
+		}
+		catch (Exception $exception) 
+		{	
+			$error_handler->exception_catch($exception);
+		}
+		
 		
 		// Return line array.
-		return $line;
+		return $result;
 	}
 	
 	// Create and return a 2D array consisting of all line arrays from database query.
