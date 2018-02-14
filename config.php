@@ -62,6 +62,7 @@ abstract class EXCEPTION_CODE
 	const QUERY_EXECUTE_ERROR		= 0X258;	// Execute returned an error code.
 	const QUERY_EXECUTE_FAIL		= 0X259;	// Execute returned a failure response.
 	const QUERY_EXECUTE_STATEMENT	= 0X25A;	// Missing or invalid query statement on execution.
+	
 	const QUERY_PREPARE_CONFIG		= 0X25B;	// Prepare query - No valid database config.
 	const QUERY_PREPARE_CONNECTION	= 0X25C;	// Prepare query - No connection to database.
 	const QUERY_PREPARE_ERROR		= 0X25D;	// Prepare query - Driver prepare method returned an error code.
@@ -70,8 +71,16 @@ abstract class EXCEPTION_CODE
 	const QUERY_PREPARE_PARAM_LIST	= 0X260;	// Prepare query - No valid list of parameters.
 	const QUERY_PREPARE_SQL			= 0X261;	// Prepare query - No valid SQL string.
 	
-	const ROW_COUNT_ERROR			= 0X2BC;	// Row count returned an error code.
-	const ROW_COUNT_STATEMENT		= 0X2BD;	// Missing or invalid query statement getting row count.
+	const QUERY_RUN_CONFIG			= 0X2BC;	// Run query - No valid database config.
+	const QUERY_RUN_CONNECTION		= 0X2BD;	// Run query - No connection to database.
+	const QUERY_RUN_ERROR			= 0X2BE;	// Run query - Driver prepare method returned an error code.
+	const QUERY_RUN_FAIL			= 0X2BF;	// Run query - Driver prepare method returned a failure response.
+	const QUERY_RUN_PARAM_ARRAY		= 0X2C0;	// Run query - No valid array of parameters.
+	const QUERY_RUN_PARAM_LIST		= 0X2C1;	// Run query - No valid list of parameters.
+	const QUERY_RUN_SQL				= 0X2C2;	// Run query - No valid SQL string.
+	
+	const ROW_COUNT_ERROR			= 0X320;	// Row count returned an error code.
+	const ROW_COUNT_STATEMENT		= 0X321;	// Missing or invalid query statement getting row count.
 }
 
 // Output given by interal exception handler.
@@ -99,6 +108,7 @@ abstract class EXCEPTION_MSG
 	const QUERY_EXECUTE_ERROR		= 'Query Execute - Error occurred.';
 	const QUERY_EXECUTE_FAIL		= 'Query Execute - Failed to execute prepared query.';
 	const QUERY_EXECUTE_STATEMENT	= 'Query Execute - Missing or invalid statement.';
+	
 	const QUERY_PREPARE_CONFIG		= 'Query Prepare - Missing or invalid database config.';
 	const QUERY_PREPARE_CONNECTION	= 'Query Prepare - Missing or invalid database connection.';
 	const QUERY_PREPARE_ERROR		= 'Query Prepare - Error occurred.';
@@ -106,6 +116,14 @@ abstract class EXCEPTION_MSG
 	const QUERY_PREPARE_PARAM_ARRAY	= 'Query prepare - Missing or invalid parameter array.';
 	const QUERY_PREPARE_PARAM_LIST	= 'Query prepare - Missing or invalid parameter list.';
 	const QUERY_PREPARE_SQL			= 'Query prepare - Missing or invalid SQL string.';
+	
+	const QUERY_RUN_CONFIG			= 'Query Run - Missing or invalid database config.';
+	const QUERY_RUN_CONNECTION		= 'Query Run - Missing or invalid database connection.';
+	const QUERY_RUN_ERROR			= 'Query Run - Error occurred.';
+	const QUERY_RUN_FAIL			= 'Query Run - Failed to Run query statement.';
+	const QUERY_RUN_PARAM_ARRAY		= 'Query Run - Missing or invalid parameter array.';
+	const QUERY_RUN_PARAM_LIST		= 'Query Run - Missing or invalid parameter list.';
+	const QUERY_RUN_SQL				= 'Query Run - Missing or invalid SQL string.';
 	
 	const ROW_COUNT_ERROR			= 'Get Row Count - Error occurred.';
 	const ROW_COUNT_STATEMENT		= 'Get Row Count - Missing or invalid statement.';
