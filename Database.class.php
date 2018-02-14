@@ -361,38 +361,81 @@ class Database implements iDatabase
 		return $statement;		
 	}
 	
-	// Prepare and execute query.
+	// Prepare and execute query in a single action. This is
+	// for one shot queries that do not need to be
+	// prepared and executed separately.
 	public function query_run()
 	{
 		$connect	= NULL;		// Database connection reference.
-		$statement	= NULL;		// Database result reference.			
+		$statement	= NULL;		// Database statement reference.			
 		$sql		= NULL;		// SQL string.
-		$params 	= array(); 	// Parameter array.
+		$params		= array(); 	// Parameter array.
 		$config		= NULL;		// Query config object.
 		$config_a	= array();	// Query config array.
-				
+		
 		// Dereference data members.
-		$connect 	= $this->connect->get_connection();
+		$connect	= $this->connect->get_connection();
 		$sql 		= $this->sql;
 		$params 	= $this->params;
-		$config 	= $this->config;
-	
-		// Break down config object to array.
-		if($config)
+		$config		= $this->config;
+		
+		try 
 		{
-			$config_a['Scrollable'] 		= $config->get_scrollable();
-			$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
-			$config_a['QueryTimeout'] 		= $config->get_timeout();
+			// Verify connection.
+			if(!$connect)
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_CONNECTION, EXCEPTION_CODE::QUERY_RUN_CONNECTION));				
+			}		
+			
+			// Verify config object.
+			if(!is_object($config))
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_CONFIG, EXCEPTION_CODE::QUERY_RUN_CONFIG));				
+			}		
+			
+			// Verify sql string. We can't really tell if it's a
+			// valid SQL string, but we can at least verify it
+			// is actually a string value and not empty.
+			if(!is_string($sql) || $sql == '')
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_SQL, EXCEPTION_CODE::QUERY_RUN_SQL));				
+			}
+			
+			// Break down config object to array. This is the only 
+			// way sql_srv will accept config values for options.
+			if($config)
+			{
+				$config_a['Scrollable'] 			= $config->get_scrollable();
+				$config_a['SendStreamParamsAtExec']	= $config->get_sendstream();
+				$config_a['QueryTimeout'] 			= $config->get_timeout();
+			}
+			
+			// Prepare and execute the query.		
+			$statement = sqlsrv_query($connect, $sql, $params, $config_a);
+		
+			// Set DB statement data member.
+			$this->statement = $statement;
+			
+			// Any errors?
+			if($error_handler->detect_error())
+			{
+				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_ERROR, EXCEPTION_CODE::QUERY_RUN_ERROR));
+			}
+			
+			// False/Failure returned.
+			if(!$statement)
+			{				
+				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_FAIL, EXCEPTION_CODE::QUERY_RUN_FAIL));
+			}			
 		}
-	
-		// Execute query.
-		$statement = sqlsrv_query($connect, $sql, $params, $config_a);
+		catch (Exception $exception) 
+		{
+			// Catch exception internally if configured to do so.
+			$error->exception_catch();
+		}
 		
-		// Set data member.
-		$this->statement = $statement;
-		
-		// Return query ID resource.
-		return $statement;
+		// Return statement reference.
+		return $statement;	
 	}
 	
 	// *Results.
