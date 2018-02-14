@@ -289,6 +289,9 @@ class Database implements iDatabase
 	// Prepare query. Returns statement reference and updates data member.
 	public function query_prepare()
 	{
+		// Dereference error handler.
+		$error_handler 	= $this->config->get_error();
+		
 		$connect	= NULL;		// Database connection reference.
 		$statement	= NULL;		// Database statement reference.			
 		$sql		= NULL;		// SQL string.
@@ -366,6 +369,9 @@ class Database implements iDatabase
 	// prepared and executed separately.
 	public function query_run()
 	{
+		// Dereference error handler.
+		$error_handler 	= $this->config->get_error();
+		
 		$connect	= NULL;		// Database connection reference.
 		$statement	= NULL;		// Database statement reference.			
 		$sql		= NULL;		// SQL string.
