@@ -222,7 +222,7 @@ class Database implements iDatabase
 			// Verify statement.
 			if(!$this->statement)
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_STATEMENT, EXCEPTION_CODE::FREE_STATEMENT_STATEMENT));				
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_STATEMENT, EXCEPTION_CODE::FREE_STATEMENT_STATEMENT));				
 			}
 			
 			// Attempt to free statement.
@@ -232,13 +232,13 @@ class Database implements iDatabase
 			// Any errors?
 			if($error_handler->detect_error())
 			{
-				$error->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_ERROR, EXCEPTION_CODE::FREE_STATEMENT_ERROR));
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_ERROR, EXCEPTION_CODE::FREE_STATEMENT_ERROR));
 			}
 			
 			// False/Failure returned.
 			if(!$result)
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_FAIL, EXCEPTION_CODE::FREE_STATEMENT_FAIL));
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::FREE_STATEMENT_FAIL, EXCEPTION_CODE::FREE_STATEMENT_FAIL));
 			}			
 		}
 		catch (Exception $exception) 
@@ -259,7 +259,7 @@ class Database implements iDatabase
 			// Verify statement.
 			if(!$this->statement)
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_STATEMENT, EXCEPTION_CODE::QUERY_EXECUTE_STATEMENT));				
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_STATEMENT, EXCEPTION_CODE::QUERY_EXECUTE_STATEMENT));				
 			}
 			
 			// Execute prepared query.
@@ -268,19 +268,19 @@ class Database implements iDatabase
 			// Any errors?
 			if($error_handler->detect_error())
 			{
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_ERROR, EXCEPTION_CODE::QUERY_EXECUTE_ERROR));
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_ERROR, EXCEPTION_CODE::QUERY_EXECUTE_ERROR));
 			}
 			
 			// False/Failure returned.
 			if(!$result)
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_FAIL, EXCEPTION_CODE::QUERY_EXECUTE_FAIL));
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_EXECUTE_FAIL, EXCEPTION_CODE::QUERY_EXECUTE_FAIL));
 			}			
 		}
 		catch (Exception $exception) 
 		{
 			// Catch exception internally if configured to do so.
-			$error->exception_catch();
+			$error_handler->exception_catch();
 		}
 				
 		return $result;	
@@ -310,13 +310,13 @@ class Database implements iDatabase
 			// Verify connection.
 			if(!$connect)
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_CONNECTION, EXCEPTION_CODE::QUERY_PREPARE_CONNECTION));				
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_CONNECTION, EXCEPTION_CODE::QUERY_PREPARE_CONNECTION));				
 			}		
 			
 			// Verify config object.
 			if(!is_object($config))
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_CONFIG, EXCEPTION_CODE::QUERY_PREPARE_CONFIG));				
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_CONFIG, EXCEPTION_CODE::QUERY_PREPARE_CONFIG));				
 			}		
 			
 			// Verify sql string. We can't really tell if it's a
@@ -324,7 +324,7 @@ class Database implements iDatabase
 			// is actually a string value and not empty.
 			if(!is_string($sql) || $sql == '')
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_SQL, EXCEPTION_CODE::QUERY_PREPARE_SQL));				
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_SQL, EXCEPTION_CODE::QUERY_PREPARE_SQL));				
 			}
 			
 			// Break down config object to array. This is the only 
@@ -345,13 +345,13 @@ class Database implements iDatabase
 			// Any errors?
 			if($error_handler->detect_error())
 			{
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_ERROR, EXCEPTION_CODE::QUERY_PREPARE_ERROR));
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_ERROR, EXCEPTION_CODE::QUERY_PREPARE_ERROR));
 			}
 			
 			// False/Failure returned.
 			if(!$statement)
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_FAIL, EXCEPTION_CODE::QUERY_PREPARE_FAIL));
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_PREPARE_FAIL, EXCEPTION_CODE::QUERY_PREPARE_FAIL));
 			}			
 		}
 		catch (Exception $exception) 
@@ -390,13 +390,13 @@ class Database implements iDatabase
 			// Verify connection.
 			if(!$connect)
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_CONNECTION, EXCEPTION_CODE::QUERY_RUN_CONNECTION));				
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_CONNECTION, EXCEPTION_CODE::QUERY_RUN_CONNECTION));				
 			}		
 			
 			// Verify config object.
 			if(!is_object($config))
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_CONFIG, EXCEPTION_CODE::QUERY_RUN_CONFIG));				
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_CONFIG, EXCEPTION_CODE::QUERY_RUN_CONFIG));				
 			}		
 			
 			// Verify sql string. We can't really tell if it's a
@@ -425,19 +425,19 @@ class Database implements iDatabase
 			// Any errors?
 			if($error_handler->detect_error())
 			{
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_ERROR, EXCEPTION_CODE::QUERY_RUN_ERROR));
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_ERROR, EXCEPTION_CODE::QUERY_RUN_ERROR));
 			}
 			
 			// False/Failure returned.
 			if(!$statement)
 			{				
-				$error->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_FAIL, EXCEPTION_CODE::QUERY_RUN_FAIL));
+				$error_handler->exception_throw(new Exception(EXCEPTION_MSG::QUERY_RUN_FAIL, EXCEPTION_CODE::QUERY_RUN_FAIL));
 			}			
 		}
 		catch (Exception $exception) 
 		{
 			// Catch exception internally if configured to do so.
-			$error->exception_catch();
+			$error_handler->exception_catch();
 		}
 		
 		// Return statement reference.
