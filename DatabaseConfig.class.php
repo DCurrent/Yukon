@@ -28,7 +28,7 @@ class DatabaseConfig implements iDatabaseConfig
 	public function __construct(Error $error = NULL)
 	{
 		// Populate defaults.
-		$this->error			= $this->construct_error($error);
+		$this->error		= $this->construct_error($error);
 		$this->scrollable 	= DEFAULTS::SCROLLABLE;
 		$this->sendstream 	= DEFAULTS::SENDSTREAM;
 		$this->timeout		= DEFAULTS::TIMEOUT;

@@ -22,10 +22,9 @@ interface iError
 
 class Error implements iError
 {
-	private 
-		$config = NULL,
-		$errors	= NULL,
-		$exception = NULL;
+	private $config = NULL;
+	private $errors	= NULL;
+	private $exception = NULL;
 	
 	public function __construct(ErrorConfig $config = NULL)
 	{	
@@ -38,21 +37,20 @@ class Error implements iError
 		return $this->config;
 	}
 	
+	public function set_config(ErrorConfig $value)
+	{
+		$this->config = $value;
+	}
+	
 	public function get_exception()
 	{
 		return $this->exception;
 	}
 	
-	// Mutators.
-	public function set_config(ErrorConfig $value)
-	{
-		$this->config = $value;
-	}		
-	
 	public function set_exception(Exception $value)
 	{
-		return $this->exception;
-	}
+		$this->exception = $value;
+	}		
 	
 	// Constructors
 	private function construct_config(ErrorConfig $value = NULL)
@@ -163,28 +161,288 @@ class Error implements iError
 	// Internal exception catch. Trigger an error and log the
 	// thrown exception.
 	public function exception_catch($severity = E_ERROR)
-	{	
-		$exception 		= $this->exception;
-		$exempt_list	= $this->config->get_exempt_codes_catch();
-		$code 			= $exception->getCode();
-		
+	{		
 		// If this code is not on the exempt
 		// list for local catching, then 
 		// throw an error ourselves. This is our last
 		// chance to catch our issue before it passes
 		// through to PHP engine.
-		$is_exempt = $this->is_exempt($exempt_list, $code);
+		
+		$is_exempt = $this->is_exempt($this->config->get_exempt_codes_catch(), $this->exception->getCode());
 		
 		if(!$is_exempt)
 		{
-			trigger_error('Yukon exception: '.$this->exception->getCode().' - '.$this->exception->getMessage(), E_USER_ERROR);
-		}
-		else
-		{
-			// Not exempt. We already caught this exception
-			// internally, so we'll need to re-throw
-			// for the application's catch block. 
-			throw $this->exception;
+			// Handle common errors here. If it's something
+			// else, then send it on to the general error
+			// catch code.
+			
+			switch($this->exception->getCode())
+			{
+				case EXCEPTION_CODE::CONNECT_CLOSE_CONNECTION:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::CONNECT_CLOSE_CONNECTION.": </b>");
+					echo(EXCEPTION_MSG::CONNECT_CLOSE_CONNECTION);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::CONNECT_CLOSE_FAIL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::CONNECT_CLOSE_FAIL.": </b>");
+					echo(EXCEPTION_MSG::CONNECT_CLOSE_FAIL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::CONNECT_OPEN_FAIL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::CONNECT_OPEN_FAIL.": </b>");
+					echo(EXCEPTION_MSG::CONNECT_OPEN_FAIL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::CONNECT_OPEN_HOST:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::CONNECT_OPEN_HOST.": </b>");
+					echo(EXCEPTION_MSG::CONNECT_OPEN_HOST);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::FREE_STATEMENT_ERROR:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::FREE_STATEMENT_ERROR.": </b>");
+					echo(EXCEPTION_MSG::FREE_STATEMENT_ERROR);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::FREE_STATEMENT_FAIL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::FREE_STATEMENT_FAIL.": </b>");
+					echo(EXCEPTION_MSG::FREE_STATEMENT_FAIL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::FREE_STATEMENT_STATEMENT:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::FREE_STATEMENT_STATEMENT.": </b>");
+					echo(EXCEPTION_MSG::FREE_STATEMENT_STATEMENT);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::LINE_ARRAY_FAIL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::LINE_ARRAY_FAIL.": </b>");
+					echo(EXCEPTION_MSG::LINE_ARRAY_FAIL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::LINE_ARRAY_STATEMENT:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::LINE_ARRAY_STATEMENT.": </b>");
+					echo(EXCEPTION_MSG::LINE_ARRAY_STATEMENT);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::LINE_OBJECT_FAIL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::LINE_OBJECT_FAIL.": </b>");
+					echo(EXCEPTION_MSG::LINE_OBJECT_FAIL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::LINE_OBJECT_STATEMENT:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::LINE_OBJECT_STATEMENT.": </b>");
+					echo(EXCEPTION_MSG::LINE_OBJECT_STATEMENT);
+					echo('<br />');
+					
+					break;
+				
+				case EXCEPTION_CODE::QUERY_DIRECT_CONNECTION:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_DIRECT_CONNECTION.": </b>");
+					echo(EXCEPTION_MSG::QUERY_DIRECT_CONNECTION);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_DIRECT_SQL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_DIRECT_SQL.": </b>");
+					echo(EXCEPTION_MSG::QUERY_DIRECT_SQL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_DIRECT_PARAM_LIST:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_DIRECT_PARAM_LIST.": </b>");
+					echo(EXCEPTION_MSG::QUERY_DIRECT_PARAM_LIST);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_DIRECT_CONFIG:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_DIRECT_CONFIG.": </b>");
+					echo(EXCEPTION_MSG::QUERY_DIRECT_CONFIG);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_DIRECT_STATEMENT:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_DIRECT_STATEMENT.": </b>");
+					echo(EXCEPTION_MSG::QUERY_DIRECT_STATEMENT);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_EXECUTE_ERROR:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_EXECUTE_ERROR.": </b>");
+					echo(EXCEPTION_MSG::QUERY_EXECUTE_ERROR);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_EXECUTE_FAIL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_EXECUTE_FAIL.": </b>");
+					echo(EXCEPTION_MSG::QUERY_EXECUTE_FAIL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_EXECUTE_STATEMENT:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_EXECUTE_STATEMENT.": </b>");
+					echo(EXCEPTION_MSG::QUERY_EXECUTE_STATEMENT);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_PREPARE_CONNECTION:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_PREPARE_CONNECTION.": </b>");
+					echo(EXCEPTION_MSG::QUERY_PREPARE_CONNECTION);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_PREPARE_SQL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_PREPARE_SQL.": </b>");
+					echo(EXCEPTION_MSG::QUERY_PREPARE_SQL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_PREPARE_PARAM_LIST:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_PREPARE_PARAM_LIST.": </b>");
+					echo(EXCEPTION_MSG::QUERY_PREPARE_PARAM_LIST);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_PREPARE_CONFIG:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_PREPARE_CONFIG.": </b>");
+					echo(EXCEPTION_MSG::QUERY_PREPARE_CONFIG);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::QUERY_PREPARE_STATEMENT:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::QUERY_PREPARE_STATEMENT.": </b>");
+					echo(EXCEPTION_MSG::QUERY_PREPARE_STATEMENT);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::ROW_COUNT_FAIL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::ROW_COUNT_FAIL.": </b>");
+					echo(EXCEPTION_MSG::ROW_COUNT_FAIL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::ROW_COUNT_STATEMENT:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::ROW_COUNT_STATEMENT.": </b>");
+					echo(EXCEPTION_MSG::ROW_COUNT_STATEMENT);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::ROW_VERIFY_FAIL:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::ROW_VERIFY_FAIL.": </b>");
+					echo(EXCEPTION_MSG::ROW_VERIFY_FAIL);
+					echo('<br />');
+					
+					break;
+					
+				case EXCEPTION_CODE::ROW_VERIFY_STATEMENT:
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::ROW_VERIFY_STATEMENT.": </b>");
+					echo(EXCEPTION_MSG::ROW_VERIFY_STATEMENT);
+					echo('<br />');
+					
+					break;
+					
+				default:					
+					
+					echo('<br />');
+					echo('<b>'.LIBRARY::NAME.' error code '.EXCEPTION_CODE::UNKNOWN.": </b>");
+					echo(EXCEPTION_MSG::UNKNOWN);
+					echo('<br />');
+					
+					// Since we don't know what happened, let's
+					// kill execution just to be safe.
+					die();
+					
+					break;
+			}			
 		}
 	}
 	
@@ -199,20 +457,15 @@ class Error implements iError
 			$this->exception = $exception_arg;			
 		}
 		
-		$exception 		= $this->exception;
-		
-		$exempt_codes	= $this->config->get_exempt_codes_throw();
-		$code			= $exception->getCode();
-		
 		// Verify code's exempt status.
-		$is_exempt = $this->is_exempt($exempt_codes, $code);
+		$is_exempt = $this->is_exempt($this->config->get_exempt_codes_throw(), $this->exception->getCode());
 		
 		if(!$is_exempt)
 		{
-			throw $exception;
+			throw $this->exception;
 		}
 		
-		return $exception;
+		return $this->exception;
 	}
 }
 

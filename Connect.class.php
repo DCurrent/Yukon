@@ -101,8 +101,8 @@ class Connect implements iConnect
 			}			
 		}
 		catch (Exception $exception) 
-		{
-			// Catch exception internally if configured to do so.
+		{		
+			// Send to catch.
 			$error->exception_catch();
 		}
 		
@@ -145,9 +145,10 @@ class Connect implements iConnect
 			
 		}
 		catch (Exception $exception) 
-		{	
-			// Catch exception internally if configured to do so.
+		{			
+			// Send to application catch.
 			$error->exception_catch();
+			
 		}
 				
 		return $result;
