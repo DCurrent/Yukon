@@ -20,7 +20,7 @@ interface iDatabase
 	function set_connection(Connect $value);		// Set connection data member.
 	function set_line_config(LineConfig $value);	// Set line parameters object.
 	function set_param_array(array $value);			// Set query sql parameter array data member.
-	function set_sql($value);						// Set query sql string data member.
+	function set_sql(string $value);				// Set query sql string data member.
 	function set_statement($value);					// Set query statement reference.
 	
 	// Request
@@ -189,7 +189,7 @@ class Database implements iDatabase
 		$this->line_config = $value;
 	}
 	
-	public function set_sql($value)
+	public function set_sql(string $value)
 	{
 		$this->sql = $value;
 	}
