@@ -2,7 +2,7 @@
 
 namespace dc\yukon;
 
-require_once('config.php');
+require_once(dirname(__FILE__).'\config.php');
 
 // Database connection object.
 interface iConnect 
@@ -70,9 +70,7 @@ class Connect implements iConnect
 		
 		$config	= $this->config;
 		$error	= $config->get_error();
-		
-		
-		
+				
 		// Set up credential array.
 		$db_cred = array('Database'	=> $config->get_name(), 
 				'UID' 		=> $config->get_user(), 
@@ -96,7 +94,7 @@ class Connect implements iConnect
 
 			// False returned. Database connection has failed.
 			if(!$connect)
-			{				
+			{
 				$error->exception_throw(new Exception(EXCEPTION_MSG::CONNECT_OPEN_FAIL, EXCEPTION_CODE::CONNECT_OPEN_FAIL));
 			}			
 		}
