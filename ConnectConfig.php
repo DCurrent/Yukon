@@ -2,7 +2,8 @@
 
 namespace dc\yukon;
 
-require_once('config.php');
+//require_once('../../dc/yukon/config.php');
+require_once(dirname(__FILE__).'\config.php');
 
 // Structure of parameters used for database connection attempt.
 interface iConnectConfig
@@ -15,13 +16,13 @@ interface iConnectConfig
 	function get_user();			// Return user.
 	function get_password();		// Return password.
 	
-	function set_db_type($value);	// Set database type.
-	function set_error($value);		// Set error handler.
+	function set_charset($value);			// Charset type (example: UTF-8).
+	function set_db_type(string $value);	// Set database type.
+	function set_error(Error $value);		// Set error handler.
 	function set_host($value);		// Set host name.
-	function set_name($value);		// Set logical database name.
-	function set_user($value);		// Set user.
-	function set_password($value);	// Set password.
-	
+	function set_name(string $value);		// Set logical database name.
+	function set_user(string $value);		// Set user.
+	function set_password(string $value);	// Set password.
 }
 
 class ConnectConfig implements iConnectConfig
@@ -34,16 +35,17 @@ class ConnectConfig implements iConnectConfig
 	private	$user		= NULL;	// User name to access database.
 	private	$password	= NULL;	// Password for user to access database.
 	
-	public function __construct(Error $error = NULL)
+	public function __construct(string $config_file = NULL, Error $error = NULL)
 	{
 		// Populate defaults.
 		$this->db_type 	= DEFAULTS::DB_TYPE;
 		$this->error	= $this->construct_error($error);
 		$this->charset	= DEFAULTS::CHARSET;
-		$this->host 	= DEFAULTS::HOST;
-		$this->name 	= DEFAULTS::NAME;
-		$this->user 	= DEFAULTS::USER;
-		$this->password	= DEFAULTS::PASSWORD;
+		
+		if($config_file)
+		{
+			$this->populate_config($config_file);
+		}
 	}
 	
 	// Accessors & Mutators.
@@ -62,7 +64,7 @@ class ConnectConfig implements iConnectConfig
 		return $this->db_type;
 	}
 	
-	public function set_db_type($value)
+	public function set_db_type(string $value)
 	{		
 		$this->db_type = $this->db_type_string_to_const($value);
 	}
@@ -72,7 +74,7 @@ class ConnectConfig implements iConnectConfig
 		return $this->error;
 	}
 	
-	public function set_error($value)
+	public function set_error(Error $value)
 	{
 		$this->error = $value;
 	}
@@ -92,7 +94,7 @@ class ConnectConfig implements iConnectConfig
 		return $this->name;
 	}
 
-	public function set_name($value)
+	public function set_name(string $value)
 	{		
 		$this->name = $value;
 	}
@@ -102,7 +104,7 @@ class ConnectConfig implements iConnectConfig
 		return $this->password;
 	}
 
-	public function set_password($value)
+	public function set_password(string $value)
 	{		
 		$this->password = $value;
 	}
@@ -112,12 +114,12 @@ class ConnectConfig implements iConnectConfig
 		return $this->user;
 	}
 
-	public function set_user($value)
+	public function set_user(string $value)
 	{		
 		$this->user = $value;
 	}	
 	
-	private function db_type_string_to_const($value)
+	private function db_type_string_to_const(string $value)
 	{
 		if($value == "MSSQL")
 		{
@@ -150,6 +152,17 @@ class ConnectConfig implements iConnectConfig
 		$this->error = $result;
 	
 		return $result;
+	}
+	
+	public function populate_config(string $config_file)
+	{
+		$config_array = parse_ini_file($config_file, TRUE);		
+		$section_array = $config_array[__CLASS__];
+		
+		$this->host 	= $section_array['HOST'];
+		$this->name 	= $section_array['DATABASE_NAME'];
+		$this->user 	= $section_array['USER_NAME'];
+		$this->password	= $section_array['USER_PASSWORD'];
 	}
 	
 }
