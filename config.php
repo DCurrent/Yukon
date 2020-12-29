@@ -17,11 +17,17 @@ abstract class LIBRARY
 // Basic configuration and default values.
 abstract class DEFAULTS
 {
-	// Connection options
-	const HOST 					= '';						// Database host (server name or address)
+	/**
+	* Connection options. Use for debugging, don't 
+	* leave hard coded credentials in your public directory!
+	**/
+	const CONFIG_SECTION		= __NAMESPACE__; 			// Array keys in config file we care about. 
+	
+	const HOST 					= '';						// Database host (server name or address). 
 	const NAME 					= '';						// Database logical name.
-	const USER 					= '';						// User name to access database.
+	const USER 					= '';						// User name to access database. 
 	const PASSWORD				= '';						// Password to access database.
+	
 	const CHARSET				= 'UTF-8';					// Character set.
 	const DB_TYPE				= DB_TYPES::MSSQL;			// Database host type.
 	// Query options.
