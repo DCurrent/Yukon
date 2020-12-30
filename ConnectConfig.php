@@ -11,18 +11,18 @@ interface iConnectConfig
 	function get_db_type();			// Return database type.
 	function get_charset();			// Get character set.
 	function get_error();			// Return error handler.
-	function get_host();			// Return host name.
-	function get_name();			// Return logical database name.
-	function get_user();			// Return user.
-	function get_password();		// Return password.
+	function get_db_host();			// Return host name.
+	function get_db_name();			// Return logical database name.
+	function get_db_user();			// Return user.
+	function get_db_password();		// Return password.
 	
 	function set_charset($value);			// Charset type (example: UTF-8).
 	function set_db_type(string $value);	// Set database type.
 	function set_error(Error $value);		// Set error handler.
-	function set_host($value);		// Set host name.
-	function set_name(string $value);		// Set logical database name.
-	function set_user(string $value);		// Set user.
-	function set_password(string $value);	// Set password.
+	function set_db_host($value);		// Set host name.
+	function set_db_name(string $value);		// Set logical database name.
+	function set_db_user(string $value);		// Set user.
+	function set_db_password(string $value);	// Set password.
 }
 
 class ConnectConfig implements iConnectConfig
@@ -79,42 +79,42 @@ class ConnectConfig implements iConnectConfig
 		$this->error = $value;
 	}
 	
-	public function get_host()
+	public function get_db_host()
 	{		
 		return $this->host;
 	}	
 	
-	public function set_host($value)
+	public function set_db_host($value)
 	{		
 		$this->host = $value;
 	}
 	
-	public function get_name()
+	public function get_db_name()
 	{		
 		return $this->name;
 	}
 
-	public function set_name(string $value)
+	public function set_db_name(string $value)
 	{		
 		$this->name = $value;
 	}
 	
-	public function get_password()
+	public function get_db_password()
 	{		
 		return $this->password;
 	}
 
-	public function set_password(string $value)
+	public function set_db_password(string $value)
 	{		
 		$this->password = $value;
 	}
 	
-	public function get_user()
+	public function get_db_user()
 	{		
 		return $this->user;
 	}
 
-	public function set_user(string $value)
+	public function set_db_user(string $value)
 	{		
 		$this->user = $value;
 	}	
@@ -154,16 +154,62 @@ class ConnectConfig implements iConnectConfig
 		return $result;
 	}
 	
+	/*
+	* Populates member data from supplied 
+	* config file. 
+	* 
+	* 1. Reads config file secion matched to 
+	* full class name (including namepsace).
+	*
+	* 2. Values in config are sent to matched
+	* mutator. Example: 
+	*
+	* Config: user_name = "John Doe"
+	* Method: $this->set_user_name($value);
+	*/
 	public function populate_config(string $config_file)
 	{
-		$config_array = parse_ini_file($config_file, TRUE);		
-		$section_array = $config_array[__CLASS__];
+		/*
+		* If any part of this code fails we need to
+		* consider it fatal and stop execution.
+		* Throw an exception for any kind of notice 
+		* or warning so we can catch and handle it. 
+		*/
+		set_error_handler(function ($severity, $message, $file, $line) {
+    	throw new \ErrorException($message, $severity, $severity, $file, $line);
+		});
 		
-		$this->host 	= $section_array['HOST'];
-		$this->name 	= $section_array['DATABASE_NAME'];
-		$this->user 	= $section_array['USER_NAME'];
-		$this->password	= $section_array['USER_PASSWORD'];
-	}
-	
+		/*
+		* Parse config into array, get class specfic 
+		* section and pass values into members.
+		*/		
+		try
+		{			
+			$config_array = parse_ini_file($config_file, TRUE);
+			$section_array = $config_array[__CLASS__];	
+			
+			// Interate through each class method.
+			foreach(get_class_methods($this) as $method) 
+			{		
+				$key = str_replace('set_', '', $method);
+				
+				/*
+				* If there is an array element with key matching
+				* current method name, then the current method 
+				* is a set mutator for the element. Populate 
+				* the set method with the element's value.
+				*/
+				if(isset($section_array[$key]))
+				{					
+					$this->$method($section_array[$key]);					
+				}
+			}
+		}
+		catch(\Exception $exception)
+		{			
+			error_log(__CLASS__.' Fatal Error: '.$exception->getMessage());
+			die(__NAMESPACE__.' Fatal Error: Failed to read values from config file. Please contact administrator.');
+		}		
+	}	
 }
 ?>
